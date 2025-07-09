@@ -1,31 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp, Clock, Package, Users } from 'lucide-react';
+import { getStats, trackVisitor, calculateSuccessRate, calculateAverageTime, type SiteStats } from '../utils/stats';
 
 const Stats: React.FC = () => {
-  const stats = [
+  const [stats, setStats] = useState<SiteStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Track visitor and get updated stats
+    const updatedStats = trackVisitor();
+    setStats(updatedStats);
+    setIsLoading(false);
+
+    // Update stats every 30 seconds to show real-time changes
+    const interval = setInterval(() => {
+      const currentStats = getStats();
+      setStats(currentStats);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (isLoading || !stats) {
+    return (
+      <section className="py-16 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-pulse text-gray-400">Loading stats...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const successRate = calculateSuccessRate(stats);
+  const avgTime = calculateAverageTime(stats);
+
+  const displayStats = [
     {
       icon: Package,
-      number: "847",
-      label: "Items Delivered",
-      subtext: "And counting (unfortunately)"
+      number: stats.totalVisitors.toLocaleString(),
+      label: "Site Visitors",
+      subtext: "And counting"
     },
     {
       icon: Users,
-      number: "312",
-      label: "Satisfied Customers",
-      subtext: "Define 'satisfied'"
+      number: stats.jobsSubmitted.toLocaleString(),
+      label: "Jobs Submitted",
+      subtext: "Real submissions"
     },
     {
       icon: Clock,
-      number: "2.3",
+      number: avgTime.toFixed(1),
       label: "Average Hours",
-      subtext: "Per delivery (when I feel like it)"
+      subtext: "Per delivery"
     },
     {
       icon: TrendingUp,
-      number: "99.9%",
+      number: `${successRate.toFixed(1)}%`,
       label: "Success Rate",
-      subtext: "That 0.1% was their fault"
+      subtext: "Reliable service"
     }
   ];
 
@@ -34,15 +68,15 @@ const Stats: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            Numbers That Look Impressive
+            Live Statistics
           </h2>
           <p className="text-lg text-gray-400">
-            Statistics that may or may not be accurate
+            Real-time data from our delivery service
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
+          {displayStats.map((stat, index) => (
             <div
               key={index}
               className="bg-gray-800 rounded-lg p-6 text-center border border-gray-700 hover:border-blue-500 transition-all duration-300 group"
@@ -66,6 +100,12 @@ const Stats: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 text-sm">
+            Last updated: {new Date(stats.lastUpdated).toLocaleString()}
+          </p>
         </div>
       </div>
     </section>
