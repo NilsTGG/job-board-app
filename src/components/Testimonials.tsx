@@ -12,7 +12,7 @@ const Testimonials: React.FC = () => {
     {
       name: "BuilderBob2024",
       rating: 4,
-      text: "Fast delivery, reasonable price. The sarcasm was free but worth every diamond.",
+      text: "Fast delivery, reasonable price. The friendly attitude was a nice bonus.",
       item: "Redstone components"
     },
     {
@@ -97,6 +97,9 @@ const Testimonials: React.FC = () => {
         <div className="text-center mt-12">
           <p className="text-gray-400 text-sm">
             * Reviews are real. The courier's personality is unfortunately also real.
+          </p>
+          <p className="text-gray-500 text-xs mt-4 italic">
+            Disclaimer: All reviews shown above are entirely fictional and provided for demonstration purposes only.
           </p>
         </div>
       </div>

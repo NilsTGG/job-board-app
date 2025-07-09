@@ -16,7 +16,7 @@ const FAQ: React.FC = () => {
   const faqItems = [
     {
       question: "How do I pay in diamonds?",
-      answer: "Drop them in a chest at the pickup location. If they're fake, I'll know, and I'll be even more sarcastic than usual."
+      answer: "Drop them in a chest at the pickup location. If they're fake, I'll know, and I might be a bit less enthusiastic."
     },
     {
       question: "What if you don't deliver my items?",

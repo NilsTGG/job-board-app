@@ -119,8 +119,8 @@ const Pricing: React.FC<PricingProps> = () => {
         </div>
         
         <div className="mt-12 text-center text-gray-400 text-sm">
-          <p>* Delivery times are wild guesses based on my mood and caffeine levels.</p>
-          <p>** "Complaint-free" means I'll complain 50% less. That's still a lot.</p>
+          <p>* Delivery times are estimates and may vary depending on circumstances.</p>
+          <p>** "Complaint-free" means I'll do my best to keep things smooth and positive.</p>
         </div>
       </div>
     </section>

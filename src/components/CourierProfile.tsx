@@ -1,5 +1,6 @@
-import React from 'react';
-import { User, MapPin, Clock, Star, Coffee } from 'lucide-react';
+import React from "react";
+import { User, MapPin, Clock, Star, Coffee } from "lucide-react";
+import { courierStats } from "../utils/courierStats";
 
 const CourierProfile: React.FC = () => {
   return (
@@ -24,35 +25,38 @@ const CourierProfile: React.FC = () => {
                 <User className="h-4 w-4 text-white" />
               </div>
             </div>
-            
+
             <div className="flex-1 text-center md:text-left">
-              <h3 className="text-2xl font-bold text-white mb-2">FoxCart_Delivery</h3>
-              <p className="text-blue-400 mb-4">Professional Item Relocator & Part-Time Philosopher</p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <h3 className="text-2xl font-bold text-white mb-2">NilsTG</h3>
+              <p className="text-blue-400 mb-4">Professional courier</p>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">847</div>
+                  <div className="text-2xl font-bold text-blue-400">
+                    {courierStats.deliveries}
+                  </div>
                   <div className="text-sm text-gray-400">Deliveries</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-400">99.9%</div>
+                  <div className="text-2xl font-bold text-green-400">
+                    {courierStats.successRate}%
+                  </div>
                   <div className="text-sm text-gray-400">Success Rate</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-400">4.2</div>
+                  <div className="text-2xl font-bold text-yellow-400">
+                    {courierStats.starRating}
+                  </div>
                   <div className="text-sm text-gray-400">Star Rating</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">∞</div>
-                  <div className="text-sm text-gray-400">Sarcasm Level</div>
-                </div>
               </div>
-              
+
               <p className="text-gray-300 mb-4">
-                "Started this delivery service three years ago when I realized there was a real need 
-                for reliable item transport. Been perfecting the routes and service ever since."
+                "Started this delivery service three years ago when I realized
+                there was a real need for reliable item transport. Been
+                perfecting the routes and service ever since."
               </p>
-              
+
               <div className="flex flex-wrap gap-2">
                 <span className="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
@@ -74,33 +78,43 @@ const CourierProfile: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h4 className="text-lg font-semibold text-white mb-3">Recent Reviews</h4>
+            <h4 className="text-lg font-semibold text-white mb-3">
+              Recent Reviews
+            </h4>
             <div className="space-y-3">
               <div className="border-l-2 border-blue-500 pl-3">
-                <p className="text-gray-300 text-sm">"Fast delivery, but why so grumpy?"</p>
+                <p className="text-gray-300 text-sm">
+                  "Fast delivery, but could smile more!"
+                </p>
                 <p className="text-gray-500 text-xs">- Steve_Builder</p>
               </div>
               <div className="border-l-2 border-green-500 pl-3">
-                <p className="text-gray-300 text-sm">"Got my diamonds delivered safely. Attitude was... memorable."</p>
+                <p className="text-gray-300 text-sm">
+                  "Got my diamonds delivered safely. Attitude was... memorable."
+                </p>
                 <p className="text-gray-500 text-xs">- DiamondHunter99</p>
               </div>
               <div className="border-l-2 border-yellow-500 pl-3">
-                <p className="text-gray-300 text-sm">"10/10 would get roasted again"</p>
+                <p className="text-gray-300 text-sm">
+                  "10/10 would use this service again"
+                </p>
                 <p className="text-gray-500 text-xs">- NoobMiner2024</p>
               </div>
             </div>
           </div>
-          
+
           <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <h4 className="text-lg font-semibold text-white mb-3">Fun Facts (That aren't fun)</h4>
+            <h4 className="text-lg font-semibold text-white mb-3">
+              Fun Facts (That aren't fun)
+            </h4>
             <ul className="space-y-2 text-gray-300 text-sm">
-              <li>• Has been stuck in a minecart for 3 years</li>
-              <li>• Knows every shortcut in the Overworld</li>
+              <li>• Numbers totally made up (for now)</li>
+              <li>• Knows every shortcut in the Overworld (i dont) </li>
               <li>• Once delivered 64 dirt blocks to the End</li>
-              <li>• Powered entirely by spite and energy drinks</li>
+              <li>• Powered by determination and a bit of coffee</li>
               <li>• Has never lost a package (yet)</li>
               <li>• Considers customer service a form of art</li>
             </ul>

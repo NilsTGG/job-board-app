@@ -38,7 +38,10 @@ const Footer: React.FC = () => {
         
         <div className="mt-12 pt-8 border-t border-gray-800 text-center">
           <p className="text-gray-400 flex items-center justify-center gap-2">
-            Made with <Heart className="h-4 w-4 text-red-400" /> and maximum sarcasm
+            Made with <Heart className="h-4 w-4 text-red-400" /> and a touch of good humor
+          </p>
+          <p className="text-gray-500 text-xs italic mt-2">
+            Disclaimer: All reviews and statistics on this site are fictional and for demonstration only. Please don't take them too seriously!
           </p>
           <p className="text-gray-500 text-sm mt-2">
             © 2024 Because You Won't™. All rights reserved. Terms apply. Side effects may include dependency on delivery services.
