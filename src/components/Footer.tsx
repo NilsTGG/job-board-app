@@ -12,26 +12,26 @@ const Footer: React.FC = () => {
               <span className="text-lg font-bold text-white">Because You Won't™</span>
             </div>
             <p className="text-gray-400">
-              Your premier Minecraft delivery service, operated by someone who definitely has better things to do.
+              Professional Minecraft delivery service for all your item transport needs.
             </p>
           </div>
           
           <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links (Because scrolling is hard)</h3>
+            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#services" className="hover:text-blue-400 transition-colors">Services (What I do)</a></li>
-              <li><a href="#pricing" className="hover:text-blue-400 transition-colors">Pricing (Your wallet's nightmare)</a></li>
-              <li><a href="#submit-job" className="hover:text-blue-400 transition-colors">Submit Job (Do it already)</a></li>
+              <li><a href="#services" className="hover:text-blue-400 transition-colors">Services</a></li>
+              <li><a href="#pricing" className="hover:text-blue-400 transition-colors">Pricing</a></li>
+              <li><a href="#submit-job" className="hover:text-blue-400 transition-colors">Submit Job</a></li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-white font-semibold mb-4">Fine Print (That you won't read)</h3>
+            <h3 className="text-white font-semibold mb-4">Service Details</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li>• Payment in diamonds only</li>
-              <li>• Delivery times are wild guesses</li>
-              <li>• Attitude included at no extra charge</li>
-              <li>• Your dependency issues aren't my problem</li>
+              <li>• Delivery times are estimates</li>
+              <li>• Professional service guaranteed</li>
+              <li>• All dimensions covered</li>
             </ul>
           </div>
         </div>

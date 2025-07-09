@@ -19,23 +19,23 @@ const JobForm: React.FC = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.ign.trim()) {
-      newErrors.ign = "IGN is required. Unless you're invisible, which you're not.";
+      newErrors.ign = "Minecraft IGN is required";
     }
 
     if (!formData.pickupCoords.trim()) {
-      newErrors.pickupCoords = "Where am I supposed to pick this up? Your imagination?";
+      newErrors.pickupCoords = "Pickup coordinates are required";
     }
 
     if (!formData.dropoffCoords.trim()) {
-      newErrors.dropoffCoords = "Drop-off location required. Try again with brain cells.";
+      newErrors.dropoffCoords = "Drop-off coordinates are required";
     }
 
     if (!formData.itemDescription.trim()) {
-      newErrors.itemDescription = "What am I delivering? Air? Be specific.";
+      newErrors.itemDescription = "Item description is required";
     }
 
     if (!formData.paymentOffer.trim()) {
-      newErrors.paymentOffer = "Payment offer required. I don't work for exposure.";
+      newErrors.paymentOffer = "Payment offer is required";
     }
 
     setErrors(newErrors);
@@ -105,7 +105,7 @@ const JobForm: React.FC = () => {
             Submit Your Job
           </h2>
           <p className="text-xl text-gray-400">
-            Fill out this form so I can reluctantly help you
+            Request a delivery by filling out the form below
           </p>
         </div>
 

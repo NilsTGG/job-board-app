@@ -24,11 +24,11 @@ const Pricing: React.FC<PricingProps> = () => {
     {
       name: "Basic",
       price: "5 Diamonds",
-      description: "For when you're too lazy to walk",
+      description: "Standard delivery service",
       features: [
         "Single item delivery",
-        "Standard route (the long way)",
-        "Basic complaining included",
+        "Standard routes",
+        "Professional service",
         "Delivery within 24 hours*"
       ],
       popular: false
@@ -36,11 +36,11 @@ const Pricing: React.FC<PricingProps> = () => {
     {
       name: "Premium",
       price: "15 Diamonds",
-      description: "For the moderately desperate",
+      description: "Enhanced service tier",
       features: [
         "Up to 5 items",
-        "Faster route (if I feel like it)",
-        "Enhanced sarcasm package",
+        "Optimized routes",
+        "Priority support",
         "Priority queue access",
         "Delivery within 12 hours*"
       ],
@@ -49,14 +49,14 @@ const Pricing: React.FC<PricingProps> = () => {
     {
       name: "Deluxe",
       price: "30 Diamonds",
-      description: "For the truly hopeless",
+      description: "Premium delivery experience",
       features: [
         "Unlimited items",
         "Express delivery",
-        "Premium attitude upgrade",
-        "Grief insurance included",
+        "Premium support",
+        "Full insurance coverage",
         "Delivery within 6 hours*",
-        "Complaint-free service**"
+        "Guaranteed delivery**"
       ],
       popular: false
     }
@@ -67,10 +67,10 @@ const Pricing: React.FC<PricingProps> = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Pricing That'll Make You Cry
+            Pricing
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Diamond-based pricing because we're fancy like that
+            Simple diamond-based pricing tiers
           </p>
         </div>
 

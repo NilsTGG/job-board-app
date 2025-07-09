@@ -6,26 +6,26 @@ const Services: React.FC = () => {
     {
       icon: Truck,
       title: "Item Delivery",
-      description: "I'll move your stuff from Point A to Point B. Revolutionary, I know.",
-      features: ["Any item, any distance", "Probably won't steal it", "Delivered with attitude"]
+      description: "Standard item transport from pickup to delivery location.",
+      features: ["Any item, any distance", "Secure transport", "Reliable service"]
     },
     {
       icon: Clock,
       title: "Rush Delivery",
-      description: "Need it fast? Pay extra diamonds and I'll consider hurrying.",
-      features: ["Priority queue (maybe)", "Faster than walking", "Double the sarcasm"]
+      description: "Faster delivery for urgent orders. Premium pricing applies.",
+      features: ["Priority queue", "Express routes", "Same-day delivery"]
     },
     {
       icon: Shield,
       title: "Secure Transport",
-      description: "Your items are as safe as my motivation to do this job.",
-      features: ["Ender chest backup", "Grief-resistant routes", "Insurance not included"]
+      description: "Protected transport with backup storage systems.",
+      features: ["Ender chest backup", "Safe routes", "Loss protection"]
     },
     {
       icon: Zap,
       title: "Bulk Orders",
-      description: "Multiple items? How ambitious. I'll handle your shopping list.",
-      features: ["Quantity discounts", "Organized delivery", "Increased complaining"]
+      description: "Large quantity deliveries with volume discounts.",
+      features: ["Quantity discounts", "Organized delivery", "Bulk pricing"]
     }
   ];
 
@@ -34,10 +34,10 @@ const Services: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            What I Do (Reluctantly)
+            Services
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Because apparently running your own errands is too hard
+            Item delivery across all dimensions
           </p>
         </div>
 

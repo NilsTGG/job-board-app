@@ -7,10 +7,10 @@ const CourierProfile: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Meet Your Courier (Unfortunately)
+            Meet Your Courier
           </h2>
           <p className="text-xl text-gray-400">
-            The person you're trusting with your precious dirt blocks
+            Professional item delivery specialist
           </p>
         </div>
 
@@ -49,9 +49,8 @@ const CourierProfile: React.FC = () => {
               </div>
               
               <p className="text-gray-300 mb-4">
-                "I started this business because walking is overrated and apparently everyone agrees. 
-                Three years later, I'm still questioning my life choices while riding around in a minecart 
-                delivering your impulse purchases."
+                "Started this delivery service three years ago when I realized there was a real need 
+                for reliable item transport. Been perfecting the routes and service ever since."
               </p>
               
               <div className="flex flex-wrap gap-2">
