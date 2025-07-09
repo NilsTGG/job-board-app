@@ -45,17 +45,17 @@ const Hero: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <div className="text-blue-400 text-3xl font-bold mb-2">24/7</div>
-              <div className="text-gray-300">Available (when I feel like it)</div>
+              <div className="text-gray-300">Available (terms apply)</div>
             </div>
             
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <div className="text-blue-400 text-3xl font-bold mb-2">100%</div>
-              <div className="text-gray-300">Delivery rate (terms apply)</div>
+              <div className="text-gray-300">Delivery rate (mostly)</div>
             </div>
             
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <div className="text-blue-400 text-3xl font-bold mb-2">0%</div>
-              <div className="text-gray-300">Customer satisfaction guaranteed</div>
+              <div className="text-gray-300">Chance I'll be nice about it</div>
             </div>
           </div>
         </div>

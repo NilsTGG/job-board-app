@@ -2,8 +2,11 @@ import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Services from './components/Services';
+import Stats from './components/Stats';
 import Pricing from './components/Pricing';
+import Testimonials from './components/Testimonials';
 import JobForm from './components/JobForm';
+import CourierProfile from './components/CourierProfile';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import { useKonamiCode } from './hooks/useKonamiCode';
@@ -17,8 +20,11 @@ function App() {
         <Header />
         <Hero />
         <Services />
+        <Stats />
         <Pricing />
+        <Testimonials />
         <JobForm />
+        <CourierProfile />
         <FAQ />
         <Footer />
       </div>

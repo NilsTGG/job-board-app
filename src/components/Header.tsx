@@ -27,19 +27,19 @@ const Header: React.FC = () => {
               onClick={() => scrollToSection('services')}
               className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              Services (Obviously)
+              Services
             </button>
             <button
               onClick={() => scrollToSection('pricing')}
               className="text-gray-300 hover:text-blue-400 transition-colors"
             >
-              Pricing (Ouch)
+              Pricing
             </button>
             <button
               onClick={() => scrollToSection('submit-job')}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Submit Job (Finally)
+              Submit Job
             </button>
           </nav>
 
@@ -60,19 +60,19 @@ const Header: React.FC = () => {
                 onClick={() => scrollToSection('services')}
                 className="block w-full text-left px-3 py-2 text-gray-300 hover:text-blue-400 transition-colors"
               >
-                Services (Obviously)
+                Services
               </button>
               <button
                 onClick={() => scrollToSection('pricing')}
                 className="block w-full text-left px-3 py-2 text-gray-300 hover:text-blue-400 transition-colors"
               >
-                Pricing (Ouch)
+                Pricing
               </button>
               <button
                 onClick={() => scrollToSection('submit-job')}
                 className="block w-full text-left px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Submit Job (Finally)
+                Submit Job
               </button>
             </div>
           </div>
