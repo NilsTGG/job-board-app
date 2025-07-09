@@ -1,0 +1,52 @@
+import React from 'react';
+import { Package, Heart } from 'lucide-react';
+
+const Footer: React.FC = () => {
+  return (
+    <footer className="bg-gray-900 border-t border-gray-800 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div className="flex items-center space-x-2 mb-4">
+              <Package className="h-6 w-6 text-blue-400" />
+              <span className="text-lg font-bold text-white">Because You Won't™</span>
+            </div>
+            <p className="text-gray-400">
+              Your premier Minecraft delivery service, operated by someone who definitely has better things to do.
+            </p>
+          </div>
+          
+          <div>
+            <h3 className="text-white font-semibold mb-4">Quick Links (Because scrolling is hard)</h3>
+            <ul className="space-y-2 text-gray-400">
+              <li><a href="#services" className="hover:text-blue-400 transition-colors">Services (What I do)</a></li>
+              <li><a href="#pricing" className="hover:text-blue-400 transition-colors">Pricing (Your wallet's nightmare)</a></li>
+              <li><a href="#submit-job" className="hover:text-blue-400 transition-colors">Submit Job (Do it already)</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-white font-semibold mb-4">Fine Print (That you won't read)</h3>
+            <ul className="space-y-2 text-gray-400 text-sm">
+              <li>• Payment in diamonds only</li>
+              <li>• Delivery times are wild guesses</li>
+              <li>• Attitude included at no extra charge</li>
+              <li>• Your dependency issues aren't my problem</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="mt-12 pt-8 border-t border-gray-800 text-center">
+          <p className="text-gray-400 flex items-center justify-center gap-2">
+            Made with <Heart className="h-4 w-4 text-red-400" /> and maximum sarcasm
+          </p>
+          <p className="text-gray-500 text-sm mt-2">
+            © 2024 Because You Won't™. All rights reserved. Terms apply. Side effects may include dependency on delivery services.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
