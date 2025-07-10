@@ -130,7 +130,9 @@ const JobForm: React.FC = () => {
     const urgency = formData.urgency;
     const insurance = formData.insurance;
     
-    let baseCost = Math.max(5, Math.ceil(quantity / 10) * 2);
+    // Base cost calculation: 1 diamond per stack (64 items) for most items
+    // Minimum 3 diamonds for any delivery
+    let baseCost = Math.max(3, Math.ceil(quantity / 64) * 2);
     
     if (urgency === 'urgent') baseCost *= 1.5;
     if (urgency === 'life-or-death') baseCost *= 2;
@@ -311,8 +313,11 @@ const JobForm: React.FC = () => {
             {/* Item Quantity */}
             <div>
               <label htmlFor="itemQuantity" className="block text-sm font-medium text-gray-300 mb-2">
-                Item Quantity *
+                Item Quantity * <span className="text-gray-400 text-xs">(Total individual items, not stacks)</span>
               </label>
+              <div className="mb-2 text-xs text-gray-400">
+                Examples: "64" for one stack of dirt, "320" for 5 stacks of cobblestone, "16" for one stack of ender pearls
+              </div>
               <input
                 type="number"
                 id="itemQuantity"
@@ -323,7 +328,7 @@ const JobForm: React.FC = () => {
                 className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                   errors.itemQuantity ? 'border-red-500' : 'border-gray-600'
                 }`}
-                placeholder="How many?"
+                placeholder="e.g., 64 (for 1 stack of most items)"
                 min="1"
               />
               {errors.itemQuantity && (
@@ -534,7 +539,12 @@ const JobForm: React.FC = () => {
                   {formData.itemQuantity && (
                     <div className="flex justify-between">
                       <span className="text-gray-300">Quantity:</span>
-                      <span className="text-white">{formData.itemQuantity}</span>
+                      <span className="text-white">
+                        {formData.itemQuantity} items 
+                        <span className="text-gray-400 text-xs ml-1">
+                          (~{Math.ceil(parseInt(formData.itemQuantity) / 64)} stacks)
+                        </span>
+                      </span>
                     </div>
                   )}
                   {formData.urgency && (
@@ -583,6 +593,7 @@ const JobForm: React.FC = () => {
                   <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Be specific with coordinates (include Y-level)</li>
                     <li>• Mention if the area is dangerous or protected</li>
+                    <li>• Quantity = total items (64 dirt = 1 stack, 320 dirt = 5 stacks)</li>
                     <li>• Payment is due upon pickup, not delivery</li>
                     <li>• Rush orders cost extra but get priority treatment</li>
                   </ul>
