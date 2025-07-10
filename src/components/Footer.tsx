@@ -1,11 +1,11 @@
 import React from 'react';
-import { Package, Heart } from 'lucide-react';
+import { Package, Heart, Github, Twitter, Discord } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-900 border-t border-gray-800 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Package className="h-6 w-6 text-blue-400" />
@@ -33,6 +33,21 @@ const Footer: React.FC = () => {
               <li>• Professional service guaranteed</li>
               <li>• All dimensions covered</li>
             </ul>
+          </div>
+          
+          <div>
+            <h3 className="text-white font-semibold mb-4">Connect</h3>
+            <div className="flex space-x-4">
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Discord className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Twitter className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Github className="h-5 w-5" />
+              </a>
+            </div>
           </div>
         </div>
         

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Menu, X, Package } from 'lucide-react';
+import { Menu, X, Package, Bell } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [notifications] = useState(3); // Simulated notification count
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -23,6 +24,7 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
+            <div className="flex items-center space-x-6">
             <button
               onClick={() => scrollToSection('services')}
               className="text-gray-300 hover:text-blue-400 transition-colors"
@@ -37,10 +39,23 @@ const Header: React.FC = () => {
             </button>
             <button
               onClick={() => scrollToSection('submit-job')}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 shadow-lg"
             >
               Submit Job
             </button>
+            
+            {/* Notification Bell */}
+            <div className="relative">
+              <button className="text-gray-300 hover:text-blue-400 transition-colors p-2">
+                <Bell className="h-5 w-5" />
+                {notifications > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {notifications}
+                  </span>
+                )}
+              </button>
+            </div>
+            </div>
           </nav>
 
           {/* Mobile Menu Button */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Diamond } from 'lucide-react';
+import { ArrowRight, Diamond, Sparkles } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const scrollToForm = () => {
@@ -31,8 +31,9 @@ const Hero: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <button
               onClick={scrollToForm}
-              className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
+             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105 flex items-center gap-2 group shadow-lg hover:shadow-xl"
             >
+             <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
               Submit Job (Because You Won't)
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>

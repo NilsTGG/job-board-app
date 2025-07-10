@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, MapPin, Package, MessageCircle, Diamond } from 'lucide-react';
+import { Send, MapPin, Package, MessageCircle, Diamond, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const JobForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +21,7 @@ const JobForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -104,8 +105,8 @@ const JobForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission (replace with actual Formspree endpoint)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Simulate form submission with realistic delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setIsSubmitted(true);
     } catch (error) {
       console.error('Form submission error:', error);
@@ -124,13 +125,28 @@ const JobForm: React.FC = () => {
     }
   };
 
+  const calculateEstimatedCost = () => {
+    const quantity = parseInt(formData.itemQuantity) || 0;
+    const urgency = formData.urgency;
+    const insurance = formData.insurance;
+    
+    let baseCost = Math.max(5, Math.ceil(quantity / 10) * 2);
+    
+    if (urgency === 'urgent') baseCost *= 1.5;
+    if (urgency === 'life-or-death') baseCost *= 2;
+    if (insurance === 'premium') baseCost += 5;
+    if (insurance === 'basic') baseCost += 2;
+    
+    return Math.ceil(baseCost);
+  };
+
   if (isSubmitted) {
     return (
       <section id="submit-job" className="py-20 bg-gray-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gray-800 rounded-lg p-8 border border-gray-700 text-center">
             <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Package className="h-8 w-8 text-white" />
+              <CheckCircle2 className="h-8 w-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">Job Submitted Successfully</h3>
             <p className="text-gray-400 mb-6">
@@ -180,6 +196,22 @@ const JobForm: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-8 border border-gray-700">
           <div className="space-y-6">
+            {/* Progress Indicator */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
+                <span>Job Details</span>
+                <span>Payment & Contact</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ 
+                    width: `${Object.values(formData).filter(v => v.trim()).length / Object.keys(formData).length * 100}%` 
+                  }}
+                ></div>
+              </div>
+            </div>
+
             {/* Contact Name */}
             <div>
               <label htmlFor="contactName" className="block text-sm font-medium text-gray-300 mb-2">
@@ -440,7 +472,12 @@ const JobForm: React.FC = () => {
             {/* Payment Offer */}
             <div>
               <label htmlFor="paymentOffer" className="block text-sm font-medium text-gray-300 mb-2">
-                Payment Offer *
+                Payment Offer * 
+                {formData.itemQuantity && formData.urgency && (
+                  <span className="text-blue-400 text-xs ml-2">
+                    (Estimated: {calculateEstimatedCost()} diamonds)
+                  </span>
+                )}
               </label>
               <div className="relative">
                 <input
@@ -480,6 +517,42 @@ const JobForm: React.FC = () => {
               </select>
             </div>
 
+            {/* Order Summary Preview */}
+            {(formData.itemType || formData.itemQuantity || formData.paymentOffer) && (
+              <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
+                <div className="flex items-center gap-2 mb-3">
+                  <Package className="h-4 w-4 text-blue-400" />
+                  <span className="text-white font-medium">Order Summary</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  {formData.itemType && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Item:</span>
+                      <span className="text-white">{formData.itemType}</span>
+                    </div>
+                  )}
+                  {formData.itemQuantity && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Quantity:</span>
+                      <span className="text-white">{formData.itemQuantity}</span>
+                    </div>
+                  )}
+                  {formData.urgency && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Urgency:</span>
+                      <span className="text-white capitalize">{formData.urgency.replace('-', ' ')}</span>
+                    </div>
+                  )}
+                  {formData.paymentOffer && (
+                    <div className="flex justify-between border-t border-gray-600 pt-2">
+                      <span className="text-gray-300">Payment:</span>
+                      <span className="text-blue-400 font-medium">{formData.paymentOffer}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
@@ -491,7 +564,7 @@ const JobForm: React.FC = () => {
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Processing (This might take a while)
+                  Processing Your Request...
                 </>
               ) : (
                 <>
@@ -500,6 +573,22 @@ const JobForm: React.FC = () => {
                 </>
               )}
             </button>
+
+            {/* Form Tips */}
+            <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h4 className="text-blue-400 font-medium mb-2">Pro Tips:</h4>
+                  <ul className="text-sm text-gray-300 space-y-1">
+                    <li>• Be specific with coordinates (include Y-level)</li>
+                    <li>• Mention if the area is dangerous or protected</li>
+                    <li>• Payment is due upon pickup, not delivery</li>
+                    <li>• Rush orders cost extra but get priority treatment</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>

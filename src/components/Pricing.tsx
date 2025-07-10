@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Diamond } from 'lucide-react';
+import { Check, Diamond, Star, Zap } from 'lucide-react';
 
 interface PricingProps {}
 
