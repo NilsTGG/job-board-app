@@ -15,36 +15,36 @@ const FAQ: React.FC = () => {
 
   const faqItems = [
     {
-      question: "How do I pay in diamonds?",
-      answer: "Drop them in a chest at the pickup location. If they're fake, I'll know, and I might be a bit less enthusiastic."
+      question: "Why would I pay extra when I could just get it myself?",
+      answer: "Because you won't. That's literally the name of the service. You're paying for your time, zero risk, and the guarantee it actually gets done instead of sitting in your 'I'll do it later' pile."
     },
     {
-      question: "What if you don't deliver my items?",
-      answer: "Then you learned a valuable lesson about trusting strangers on the internet. But don't worry, I have a 100% delivery rate because I'm too lazy to deal with refunds."
+      question: "Can you buy items for me if I don't have them?",
+      answer: "Yes, I'm basically Minecraft Instacart but with more attitude. You pay me back the item cost plus my fee plus emotional damage for enabling your laziness."
     },
     {
-      question: "Can you deliver to the Nether?",
-      answer: "Sure, if you want to pay double. Heat makes me cranky, and you don't want to see me cranky. Well, crankier."
+      question: "What if I can't pay you back right away?",
+      answer: "Then you get custom debt reminder messages and interest calculated in disappointment. I'm very creative with my collection methods."
     },
     {
-      question: "What if I don't have enough diamonds?",
-      answer: "Then you probably shouldn't be ordering delivery service. Go mine some diamonds like everyone else had to at some point."
+      question: "Do you deliver to dangerous areas?",
+      answer: "Nether, End, PvP zones - sure. I charge extra for the privilege of potentially dying for your convenience. Danger tax is non-negotiable."
     },
     {
-      question: "Are you actually reliable?",
-      answer: "I'm as reliable as your WiFi connection during a thunderstorm. But hey, at least I'm honest about it."
+      question: "Why are you so sarcastic?",
+      answer: "Because I'm a professional courier in a block game dealing with people who pay me to walk places they could walk themselves. The sarcasm is included in the service fee."
     },
     {
-      question: "What happens if my items get stolen?",
-      answer: "I take secure routes and use ender chests for backup. If someone manages to steal your dirt blocks, they probably needed them more than you."
+      question: "Can you help me find sellers?",
+      answer: "Yes, I'll find sellers you're too lazy to locate and negotiate prices you're too awkward to discuss. It's like having a personal shopper, but for blocks."
     },
     {
-      question: "Can I tip you?",
-      answer: "Tips are accepted in the form of diamonds, compliments about my sparkling personality, or just leaving me alone after delivery."
+      question: "What if the seller scams me?",
+      answer: "That's why you use me as a middleman. I handle the transaction so you don't have to trust random players with your precious diamonds. Trust issues sold separately."
     },
     {
-      question: "Do you deliver to banned players?",
-      answer: "If you're banned, you have bigger problems than getting your items delivered. Sort your life out first."
+      question: "How do I know you won't just steal my stuff?",
+      answer: "Because stealing would require me to care enough to be dishonest. I'm too lazy for crime. Plus, my reputation is worth more than your stack of cobblestone."
     }
   ];
 

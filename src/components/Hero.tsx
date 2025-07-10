@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Minecraft item delivery service. Because walking is overrated.
+            Minecraft delivery service for lazy players with diamonds to burn.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">

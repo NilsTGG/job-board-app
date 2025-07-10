@@ -5,30 +5,30 @@ const Services: React.FC = () => {
   const services = [
     {
       icon: Truck,
-      title: "Item Delivery",
-      description: "Standard item transport from pickup to delivery location.",
-      features: ["Any item, any distance", "Secure transport", "Reliable service"],
+      title: "Item Delivery (Because You Won't)",
+      description: "You have stuff. You want it somewhere else. I'll do it. You pay diamonds.",
+      features: ["Any item, any distance", "I risk my life, you don't", "Zero effort required from you"],
       color: "blue"
     },
     {
-      icon: Clock,
-      title: "Rush Delivery",
-      description: "Faster delivery for urgent orders. Premium pricing applies.",
-      features: ["Priority queue", "Express routes", "Same-day delivery"],
+      icon: Zap,
+      title: "Shopping Service",
+      description: "Don't have the item? Can't find the seller? I'll buy it for you like the enabler I am.",
+      features: ["I find the seller", "I negotiate the price", "You pay me back + fee", "Maximum laziness achieved"],
       color: "orange"
     },
     {
       icon: Shield,
-      title: "Secure Transport",
-      description: "Protected transport with backup storage systems.",
-      features: ["Ender chest backup", "Safe routes", "Loss protection"],
+      title: "Risk Delivery (Danger Tax Included)",
+      description: "Nether? End? PvP zones? Sure, I hate myself anyway.",
+      features: ["I die so you don't have to", "Premium 'I might not come back' pricing", "Passive-aggressive delivery notes"],
       color: "green"
     },
     {
-      icon: Zap,
-      title: "Bulk Orders",
-      description: "Large quantity deliveries with volume discounts.",
-      features: ["Quantity discounts", "Organized delivery", "Bulk pricing"],
+      icon: Clock,
+      title: "Buy Now, Regret Later",
+      description: "I'll buy it upfront. You pay me back. Eventually. Maybe.",
+      features: ["Zero upfront cost", "Custom debt reminder messages", "Interest in the form of sarcasm"],
       color: "purple"
     }
   ];
@@ -62,10 +62,10 @@ const Services: React.FC = () => {
               className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-[1.02] group cursor-pointer"
               onClick={() => {
                 const serviceDetails = {
-                  "Item Delivery": "Standard delivery service:\n• 5-15 diamonds depending on distance\n• 2-6 hour delivery window\n• All items accepted (except illegal stuff)\n• Secure ender chest backup",
-                  "Rush Delivery": "Express delivery service:\n• 1.5x standard pricing\n• Priority queue access\n• 1-3 hour delivery window\n• Perfect for urgent builds",
-                  "Secure Transport": "Premium security service:\n• +5 diamonds insurance fee\n• Multiple backup systems\n• Dangerous route protection\n• 100% loss protection guarantee",
-                  "Bulk Orders": "Volume delivery service:\n• 10% discount on 5+ stacks\n• 20% discount on 20+ stacks\n• Organized delivery schedule\n• Perfect for large builds"
+                  "Item Delivery (Because You Won't)": "Why pay extra when you could get it yourself?\n\n• Your time is worth more than walking\n• I risk death, you risk nothing\n• No PvP drama for you\n• It actually gets done (unlike your 'I'll do it later')\n• 5-15 diamonds depending on how far I have to walk",
+                  "Shopping Service": "Personal shopping for the terminally lazy:\n\n• I find sellers you're too lazy to locate\n• I negotiate prices you're too awkward to discuss\n• You pay: item cost + my fee + emotional damage\n• Perfect for people who say 'someone should sell X' instead of looking",
+                  "Risk Delivery (Danger Tax Included)": "Premium 'I might die' service:\n\n• Nether deliveries: +100% surcharge\n• End dimension: +150% surcharge\n• PvP zones: +200% surcharge + therapy costs\n• Includes complimentary passive-aggressive sign at delivery",
+                  "Buy Now, Regret Later": "Credit system for the financially irresponsible:\n\n• I buy it now, you owe me later\n• Custom debt reminder messages\n• Interest calculated in disappointment\n• Perfect for impulse buyers with commitment issues"
                 };
                 alert(serviceDetails[service.title as keyof typeof serviceDetails] || 'Service details coming soon!');
               }}

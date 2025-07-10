@@ -316,7 +316,7 @@ const JobForm: React.FC = () => {
               {/* Item Description */}
               <div>
                 <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-300 mb-2">
-                  What needs to be delivered? *
+                  What do you need? (Delivery or Shopping Service) *
                 </label>
                 <div className="relative">
                   <input
@@ -329,7 +329,7 @@ const JobForm: React.FC = () => {
                     className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                       errors.itemDescription ? 'border-red-500' : 'border-gray-600'
                     }`}
-                    placeholder="e.g., 64 oak logs, diamond pickaxe, 5 stacks of cobblestone"
+                    placeholder="e.g., 'Deliver: 64 oak logs' or 'Buy me: diamond pickaxe from spawn shops'"
                   />
                   <Package className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
                 </div>
@@ -601,10 +601,10 @@ const JobForm: React.FC = () => {
                 <div>
                   <h4 className="text-blue-400 font-medium mb-2">Quick Tips:</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• Coordinates: Use F3 to get exact location (X Y Z format)</li>
-                    <li>• Payment: Due at pickup, not delivery</li>
-                    <li>• Contact: I'll message you on Discord for coordination</li>
-                    <li>• Quantity: Total items (64 = 1 stack for most items)</li>
+                    <li>• <strong>Delivery:</strong> You have items, I move them. Payment due at pickup.</li>
+                    <li>• <strong>Shopping:</strong> I buy items for you. You pay me back + service fee.</li>
+                    <li>• <strong>Coordinates:</strong> Use F3 for exact location (X Y Z format)</li>
+                    <li>• <strong>Dangerous areas:</strong> Nether/End/PvP zones cost extra (danger tax)</li>
                   </ul>
                 </div>
               </div>
