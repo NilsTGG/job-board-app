@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
+import AccessibleCarousel from './AccessibleCarousel';
 
 const Testimonials: React.FC = () => {
   const testimonials = [
@@ -41,6 +42,47 @@ const Testimonials: React.FC = () => {
     }
   ];
 
+  // Convert testimonials to carousel items
+  const carouselItems = testimonials.map((testimonial, index) => ({
+    id: `testimonial-${index}`,
+    title: `Review by ${testimonial.name}`,
+    content: (
+      <div className="bg-gray-900 rounded-lg p-6 border border-gray-700 h-full">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`h-4 w-4 ${
+                  i < testimonial.rating
+                    ? 'text-yellow-400 fill-current'
+                    : 'text-gray-600'
+                }`}
+              />
+            ))}
+          </div>
+          <Quote className="h-5 w-5 text-blue-400" />
+        </div>
+        
+        <p className="text-gray-300 mb-4 text-sm leading-relaxed">
+          "{testimonial.text}"
+        </p>
+        
+        <div className="border-t border-gray-700 pt-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-white font-medium text-sm">{testimonial.name}</p>
+              <p className="text-gray-500 text-xs">Ordered: {testimonial.item}</p>
+            </div>
+            <div className="text-blue-400 text-xs">
+              Verified Purchase
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }));
+
   return (
     <section className="py-20 bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,46 +95,13 @@ const Testimonials: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-gray-900 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${
-                        i < testimonial.rating
-                          ? 'text-yellow-400 fill-current'
-                          : 'text-gray-600'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <Quote className="h-5 w-5 text-blue-400" />
-              </div>
-              
-              <p className="text-gray-300 mb-4 text-sm leading-relaxed">
-                "{testimonial.text}"
-              </p>
-              
-              <div className="border-t border-gray-700 pt-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-white font-medium text-sm">{testimonial.name}</p>
-                    <p className="text-gray-500 text-xs">Ordered: {testimonial.item}</p>
-                  </div>
-                  <div className="text-blue-400 text-xs">
-                    Verified Purchase
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Accessible Carousel Implementation */}
+        <AccessibleCarousel
+          items={carouselItems}
+          autoPlay={false}
+          showControls={true}
+          ariaLabel="Customer testimonials and reviews"
+        />
         
         <div className="text-center mt-12">
           <p className="text-gray-400 text-sm">

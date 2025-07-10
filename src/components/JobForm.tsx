@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Send, MapPin, Package, MessageCircle, Diamond, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, Calculator, Clock, Shield } from 'lucide-react';
+import AccessibleSelect from './AccessibleSelect';
 
 const JobForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -29,6 +30,26 @@ const JobForm: React.FC = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showPriceCalculator, setShowPriceCalculator] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+
+  // Options for accessible selects
+  const urgencyOptions = [
+    { value: 'not-urgent', label: 'Whenever', description: '20% discount - I\'ll get to it eventually' },
+    { value: 'soon', label: 'Soon-ish', description: 'Standard pricing - reasonable timeframe' },
+    { value: 'urgent', label: 'ASAP', description: '+50% surcharge - priority queue' },
+    { value: 'life-or-death', label: 'Emergency', description: '+100% surcharge - drop everything mode' }
+  ];
+
+  const insuranceOptions = [
+    { value: 'none', label: 'None (YOLO)', description: 'No protection - live dangerously' },
+    { value: 'basic', label: 'Basic Protection', description: '+2 diamonds - standard coverage' },
+    { value: 'premium', label: 'Premium Coverage', description: '+5 diamonds - full protection guarantee' }
+  ];
+
+  const contactOptions = [
+    { value: 'discord', label: 'Discord', description: 'Fastest response time' },
+    { value: 'minecraft', label: 'In-game chat', description: 'When I\'m online' },
+    { value: 'reddit', label: 'Reddit DM', description: 'Slower but reliable' }
+  ];
 
   // Auto-save to localStorage
   useEffect(() => {
@@ -418,42 +439,23 @@ const JobForm: React.FC = () => {
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label htmlFor="urgency" className="block text-sm font-medium text-gray-300 mb-2">
-                    <Clock className="h-4 w-4 inline mr-1" />
-                    Urgency
-                  </label>
-                  <select
-                    id="urgency"
-                    name="urgency"
-                    value={formData.urgency}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                  >
-                    <option value="not-urgent">Whenever (20% off)</option>
-                    <option value="soon">Soon-ish (standard)</option>
-                    <option value="urgent">ASAP (+50%)</option>
-                    <option value="life-or-death">Emergency (+100%)</option>
-                  </select>
-                </div>
+                <AccessibleSelect
+                  id="urgency"
+                  label="Urgency"
+                  options={urgencyOptions}
+                  value={formData.urgency}
+                  onChange={(value) => setFormData(prev => ({ ...prev, urgency: value }))}
+                  searchable={false}
+                />
 
-                <div>
-                  <label htmlFor="insurance" className="block text-sm font-medium text-gray-300 mb-2">
-                    <Shield className="h-4 w-4 inline mr-1" />
-                    Insurance
-                  </label>
-                  <select
-                    id="insurance"
-                    name="insurance"
-                    value={formData.insurance}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                  >
-                    <option value="none">None (YOLO)</option>
-                    <option value="basic">Basic (+2 diamonds)</option>
-                    <option value="premium">Premium (+5 diamonds)</option>
-                  </select>
-                </div>
+                <AccessibleSelect
+                  id="insurance"
+                  label="Insurance"
+                  options={insuranceOptions}
+                  value={formData.insurance}
+                  onChange={(value) => setFormData(prev => ({ ...prev, insurance: value }))}
+                  searchable={false}
+                />
 
                 <div>
                   <label htmlFor="itemQuantity" className="block text-sm font-medium text-gray-300 mb-2">
@@ -490,20 +492,14 @@ const JobForm: React.FC = () => {
               {showAdvanced && (
                 <div className="mt-4 space-y-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="contactName" className="block text-sm font-medium text-gray-300 mb-2">
-                        Contact Name
-                      </label>
-                      <input
-                        type="text"
-                        id="contactName"
-                        name="contactName"
-                        value={formData.contactName}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                        placeholder="Your name or IGN"
-                      />
-                    </div>
+                    <AccessibleSelect
+                      id="contactMethod"
+                      label="Preferred Contact Method"
+                      options={contactOptions}
+                      value={formData.contactMethod}
+                      onChange={(value) => setFormData(prev => ({ ...prev, contactMethod: value }))}
+                      searchable={false}
+                    />
 
                     <div>
                       <label htmlFor="deadline" className="block text-sm font-medium text-gray-300 mb-2">
