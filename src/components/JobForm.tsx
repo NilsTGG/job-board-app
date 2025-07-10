@@ -1,113 +1,146 @@
-import React, { useState } from 'react';
-import { Send, MapPin, Package, MessageCircle, Diamond, AlertCircle, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Send, MapPin, Package, MessageCircle, Diamond, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, Calculator, Clock, Shield } from 'lucide-react';
 
 const JobForm: React.FC = () => {
   const [formData, setFormData] = useState({
+    // Essential fields (always visible)
     ign: '',
+    itemDescription: '',
     pickupCoords: '',
     dropoffCoords: '',
-    itemDescription: '',
-    itemQuantity: '',
-    itemType: '',
     paymentOffer: '',
+    
+    // Smart defaults
     contactMethod: 'discord',
+    urgency: 'soon',
+    insurance: 'basic',
+    itemQuantity: '64',
+    
+    // Optional fields (progressive disclosure)
     contactName: '',
-    urgency: '',
-    insurance: '',
     deadline: '',
-    notes: ''
+    notes: '',
+    itemType: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showPriceCalculator, setShowPriceCalculator] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
+  // Auto-save to localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem('jobForm_draft');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData(prev => ({ ...prev, ...parsed }));
+      } catch (e) {
+        console.warn('Failed to load saved form data');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('jobForm_draft', JSON.stringify(formData));
+  }, [formData]);
+
+  // Smart validation with contextual messages
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Contact Name validation
-    if (!formData.contactName.trim()) {
-      newErrors.contactName = "Contact name required. Unless you want to be known as 'Mysterious Stranger'.";
-    }
-
-    // Urgency validation
-    if (!formData.urgency.trim()) {
-      newErrors.urgency = "Please specify how urgent this is. 'Yesterday' is not a valid option.";
-    }
-
-    // Insurance validation
-    if (!formData.insurance.trim()) {
-      newErrors.insurance = "Insurance selection required. If you don't care about your stuff, just say so.";
-    }
-
-    // Deadline validation
-    if (!formData.deadline.trim()) {
-      newErrors.deadline = "Deadline required. 'Whenever' is not specific enough.";
-    }
-
-    // Item Quantity validation
-    if (!formData.itemQuantity.trim()) {
-      newErrors.itemQuantity = "How many? 'A bunch' is not a number.";
-    } else if (isNaN(Number(formData.itemQuantity)) || Number(formData.itemQuantity) <= 0) {
-      newErrors.itemQuantity = "Quantity must be a positive number. No negative potatoes.";
-    }
-
-    // Item Type validation
-    if (!formData.itemType.trim()) {
-      newErrors.itemType = "What type of item? 'Stuff' is not descriptive.";
-    }
-
-    // IGN validation
+    // IGN validation with helpful suggestions
     if (!formData.ign.trim()) {
-      newErrors.ign = "IGN is required. Unless you're invisible, which you're not.";
+      newErrors.ign = "Your Minecraft username is required";
     } else if (!/^[a-zA-Z0-9_]{3,16}$/.test(formData.ign.trim())) {
-      newErrors.ign = "Invalid IGN. Minecraft usernames are 3-16 characters: letters, numbers, and underscores only.";
+      newErrors.ign = "Minecraft usernames are 3-16 characters (letters, numbers, underscores only)";
     }
 
-    // Pickup Coords validation
-    if (!formData.pickupCoords.trim()) {
-      newErrors.pickupCoords = "Where am I supposed to pick this up? Your imagination?";
-    } else if (!/^(-?\d+\s*,\s*){2}-?\d+$/.test(formData.pickupCoords.replace(/[XYZxyz:]/g, '').trim())) {
-      newErrors.pickupCoords = "Invalid format. Use something like 'X:123, Y:64, Z:456'.";
-    }
-
-    // Dropoff Coords validation
-    if (!formData.dropoffCoords.trim()) {
-      newErrors.dropoffCoords = "Drop-off location required. Try again with brain cells.";
-    } else if (!/^(-?\d+\s*,\s*){2}-?\d+$/.test(formData.dropoffCoords.replace(/[XYZxyz:]/g, '').trim())) {
-      newErrors.dropoffCoords = "Invalid format. Use something like 'X:123, Y:64, Z:456'.";
-    }
-
-    // Item Description validation
+    // Item description with smart suggestions
     if (!formData.itemDescription.trim()) {
-      newErrors.itemDescription = "What am I delivering? Air? Be specific.";
-    } else if (formData.itemDescription.trim().length < 5) {
-      newErrors.itemDescription = "Description must be at least 5 characters. Try harder.";
+      newErrors.itemDescription = "What should I deliver?";
+    } else if (formData.itemDescription.trim().length < 3) {
+      newErrors.itemDescription = "Please be more specific (at least 3 characters)";
     }
 
-    // Payment Offer validation
+    // Coordinate validation with format help
+    const coordPattern = /^-?\d+\s*,?\s*-?\d+\s*,?\s*-?\d+$/;
+    if (!formData.pickupCoords.trim()) {
+      newErrors.pickupCoords = "Where should I pick up the items?";
+    } else if (!coordPattern.test(formData.pickupCoords.replace(/[XYZxyz:\s]/g, ''))) {
+      newErrors.pickupCoords = "Format: X Y Z or X,Y,Z (e.g., 100 64 -200)";
+    }
+
+    if (!formData.dropoffCoords.trim()) {
+      newErrors.dropoffCoords = "Where should I deliver the items?";
+    } else if (!coordPattern.test(formData.dropoffCoords.replace(/[XYZxyz:\s]/g, ''))) {
+      newErrors.dropoffCoords = "Format: X Y Z or X,Y,Z (e.g., 100 64 -200)";
+    }
+
+    // Payment validation with suggestions
     if (!formData.paymentOffer.trim()) {
-      newErrors.paymentOffer = "Payment offer required. I don't work for exposure.";
+      newErrors.paymentOffer = "How much are you offering?";
     } else if (!/\d+/.test(formData.paymentOffer)) {
-      newErrors.paymentOffer = "Payment must include at least one number. '15 diamonds' is good. 'a potato' is not.";
+      newErrors.paymentOffer = "Please include a number (e.g., '5 diamonds')";
+    }
+
+    // Quantity validation
+    if (formData.itemQuantity && (isNaN(Number(formData.itemQuantity)) || Number(formData.itemQuantity) <= 0)) {
+      newErrors.itemQuantity = "Quantity must be a positive number";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Smart price calculator
+  const calculateEstimatedCost = () => {
+    const quantity = parseInt(formData.itemQuantity) || 64;
+    const urgency = formData.urgency;
+    const insurance = formData.insurance;
+    
+    // Base cost: 3 diamonds minimum, +1 per stack
+    let baseCost = Math.max(3, Math.ceil(quantity / 64) + 2);
+    
+    // Urgency multipliers
+    const urgencyMultipliers = {
+      'not-urgent': 0.8,
+      'soon': 1,
+      'urgent': 1.5,
+      'life-or-death': 2
+    };
+    
+    baseCost *= urgencyMultipliers[urgency as keyof typeof urgencyMultipliers] || 1;
+    
+    // Insurance costs
+    if (insurance === 'premium') baseCost += 5;
+    if (insurance === 'basic') baseCost += 2;
+    
+    return Math.ceil(baseCost);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      // Scroll to first error
+      const firstError = Object.keys(errors)[0];
+      const element = document.getElementById(firstError);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
-      // Simulate form submission with realistic delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsSubmitted(true);
+      localStorage.removeItem('jobForm_draft'); // Clear saved data
     } catch (error) {
       console.error('Form submission error:', error);
     } finally {
@@ -125,21 +158,18 @@ const JobForm: React.FC = () => {
     }
   };
 
-  const calculateEstimatedCost = () => {
-    const quantity = parseInt(formData.itemQuantity) || 0;
-    const urgency = formData.urgency;
-    const insurance = formData.insurance;
-    
-    // Base cost calculation: 1 diamond per stack (64 items) for most items
-    // Minimum 3 diamonds for any delivery
-    let baseCost = Math.max(3, Math.ceil(quantity / 64) * 2);
-    
-    if (urgency === 'urgent') baseCost *= 1.5;
-    if (urgency === 'life-or-death') baseCost *= 2;
-    if (insurance === 'premium') baseCost += 5;
-    if (insurance === 'basic') baseCost += 2;
-    
-    return Math.ceil(baseCost);
+  // Auto-format coordinates
+  const handleCoordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    // Auto-format common coordinate patterns
+    let formatted = value;
+    if (value.match(/^\d+\s+\d+\s+\d+$/)) {
+      formatted = value.replace(/\s+/g, ', ');
+    }
+    setFormData(prev => ({ ...prev, [name]: formatted }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
   if (isSubmitted) {
@@ -150,29 +180,40 @@ const JobForm: React.FC = () => {
             <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Job Submitted Successfully</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Job Submitted Successfully!</h3>
             <p className="text-gray-400 mb-6">
               Your delivery request has been received. I'll get to it when I get to it. 
-              Don't hold your breath, but also don't die waiting.
+              Check Discord for updates!
             </p>
+            <div className="bg-gray-700 rounded-lg p-4 mb-6">
+              <h4 className="text-white font-medium mb-2">What happens next:</h4>
+              <ul className="text-gray-300 text-sm space-y-1 text-left">
+                <li>• I'll review your request within 30 minutes</li>
+                <li>• You'll get a Discord message with pickup details</li>
+                <li>• Payment is due when I arrive at pickup location</li>
+                <li>• Delivery confirmation sent when complete</li>
+              </ul>
+            </div>
             <button
               onClick={() => {
                 setIsSubmitted(false);
                 setFormData({
                   ign: '',
+                  itemDescription: '',
                   pickupCoords: '',
                   dropoffCoords: '',
-                  itemDescription: '',
-                  itemQuantity: '',
-                  itemType: '',
                   paymentOffer: '',
                   contactMethod: 'discord',
+                  urgency: 'soon',
+                  insurance: 'basic',
+                  itemQuantity: '64',
                   contactName: '',
-                  urgency: '',
-                  insurance: '',
                   deadline: '',
-                  notes: ''
+                  notes: '',
+                  itemType: ''
                 });
+                setCurrentStep(1);
+                setShowAdvanced(false);
               }}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -184,6 +225,14 @@ const JobForm: React.FC = () => {
     );
   }
 
+  const completedFields = Object.entries(formData).filter(([key, value]) => {
+    if (['contactMethod', 'urgency', 'insurance'].includes(key)) return true; // Smart defaults
+    return value.trim() !== '';
+  }).length;
+
+  const totalFields = Object.keys(formData).length;
+  const progress = (completedFields / totalFields) * 100;
+
   return (
     <section id="submit-job" className="py-20 bg-gray-900">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,348 +241,315 @@ const JobForm: React.FC = () => {
             Submit Your Job
           </h2>
           <p className="text-xl text-gray-400">
-            Fill out this form so I can reluctantly help you
+            Quick form - only the essentials required
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-8 border border-gray-700">
+          {/* Progress Indicator */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
+              <span>Progress</span>
+              <span>{Math.round(progress)}% complete</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-2">
+              <div 
+                className="bg-gradient-to-r from-blue-600 to-green-600 h-2 rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+
           <div className="space-y-6">
-            {/* Progress Indicator */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
-                <span>Job Details</span>
-                <span>Payment & Contact</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${Object.values(formData).filter(v => v.trim()).length / Object.keys(formData).length * 100}%` 
-                  }}
-                ></div>
-              </div>
-            </div>
+            {/* Step 1: Essential Information */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                Essential Information
+              </h3>
 
-            {/* Contact Name */}
-            <div>
-              <label htmlFor="contactName" className="block text-sm font-medium text-gray-300 mb-2">
-                Contact Name *
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="contactName"
-                  name="contactName"
-                  value={formData.contactName}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.contactName}
-                  className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    errors.contactName ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="Your real or fake name, I won't judge"
-                />
-              </div>
-              {errors.contactName && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.contactName}</p>
-              )}
-            </div>
-
-            {/* Urgency */}
-            <div>
-              <label htmlFor="urgency" className="block text-sm font-medium text-gray-300 mb-2">
-                Urgency *
-              </label>
-              <select
-                id="urgency"
-                name="urgency"
-                value={formData.urgency}
-                onChange={handleChange}
-                aria-invalid={!!errors.urgency}
-                className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                  errors.urgency ? 'border-red-500' : 'border-gray-600'
-                }`}
-              >
-                <option value="">Select urgency</option>
-                <option value="not-urgent">Whenever, I guess</option>
-                <option value="soon">Soon-ish</option>
-                <option value="urgent">ASAP (but not literally instant)</option>
-                <option value="life-or-death">Life or death (I doubt it)</option>
-              </select>
-              {errors.urgency && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.urgency}</p>
-              )}
-            </div>
-
-            {/* Insurance */}
-            <div>
-              <label htmlFor="insurance" className="block text-sm font-medium text-gray-300 mb-2">
-                Insurance *
-              </label>
-              <select
-                id="insurance"
-                name="insurance"
-                value={formData.insurance}
-                onChange={handleChange}
-                aria-invalid={!!errors.insurance}
-                className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                  errors.insurance ? 'border-red-500' : 'border-gray-600'
-                }`}
-              >
-                <option value="">Select insurance</option>
-                <option value="none">None (YOLO)</option>
-                <option value="basic">Basic (I'll try not to drop it)</option>
-                <option value="premium">Premium (I'll actually care)</option>
-              </select>
-              {errors.insurance && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.insurance}</p>
-              )}
-            </div>
-
-            {/* Deadline */}
-            <div>
-              <label htmlFor="deadline" className="block text-sm font-medium text-gray-300 mb-2">
-                Deadline *
-              </label>
-              <input
-                type="date"
-                id="deadline"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleChange}
-                aria-invalid={!!errors.deadline}
-                className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                  errors.deadline ? 'border-red-500' : 'border-gray-600'
-                }`}
-              />
-              {errors.deadline && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.deadline}</p>
-              )}
-            </div>
-
-            {/* Item Quantity */}
-            <div>
-              <label htmlFor="itemQuantity" className="block text-sm font-medium text-gray-300 mb-2">
-                Item Quantity * <span className="text-gray-400 text-xs">(Total individual items, not stacks)</span>
-              </label>
-              <div className="mb-2 text-xs text-gray-400">
-                Examples: "64" for one stack of dirt, "320" for 5 stacks of cobblestone, "16" for one stack of ender pearls
-              </div>
-              <input
-                type="number"
-                id="itemQuantity"
-                name="itemQuantity"
-                value={formData.itemQuantity}
-                onChange={handleChange}
-                aria-invalid={!!errors.itemQuantity}
-                className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                  errors.itemQuantity ? 'border-red-500' : 'border-gray-600'
-                }`}
-                placeholder="e.g., 64 (for 1 stack of most items)"
-                min="1"
-              />
-              {errors.itemQuantity && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.itemQuantity}</p>
-              )}
-            </div>
-
-            {/* Item Type */}
-            <div>
-              <label htmlFor="itemType" className="block text-sm font-medium text-gray-300 mb-2">
-                Item Type *
-              </label>
-              <input
-                type="text"
-                id="itemType"
-                name="itemType"
-                value={formData.itemType}
-                onChange={handleChange}
-                aria-invalid={!!errors.itemType}
-                className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                  errors.itemType ? 'border-red-500' : 'border-gray-600'
-                }`}
-                placeholder="Potatoes, diamonds, suspicious stew..."
-              />
-              {errors.itemType && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.itemType}</p>
-              )}
-            </div>
-
-            {/* IGN Field */}
-            <div>
-              <label htmlFor="ign" className="block text-sm font-medium text-gray-300 mb-2">
-                Minecraft IGN *
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="ign"
-                  name="ign"
-                  value={formData.ign}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.ign}
-                  className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    errors.ign ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="YourMinecraftUsername"
-                />
-                <MessageCircle className="absolute right-3 top-3 h-5 w-5 text-gray-400" aria-hidden="true" focusable="false" />
-              </div>
-              {errors.ign && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.ign}</p>
-              )}
-            </div>
-
-            {/* Pickup Coordinates */}
-            <div>
-              <label htmlFor="pickupCoords" className="block text-sm font-medium text-gray-300 mb-2">
-                Pickup Coordinates *
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="pickupCoords"
-                  name="pickupCoords"
-                  value={formData.pickupCoords}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.pickupCoords}
-                  className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    errors.pickupCoords ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="X: 123, Y: 64, Z: -456"
-                />
-                <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" aria-hidden="true" focusable="false" />
-              </div>
-              {errors.pickupCoords && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.pickupCoords}</p>
-              )}
-            </div>
-
-            {/* Drop-off Coordinates */}
-            <div>
-              <label htmlFor="dropoffCoords" className="block text-sm font-medium text-gray-300 mb-2">
-                Drop-off Coordinates *
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="dropoffCoords"
-                  name="dropoffCoords"
-                  value={formData.dropoffCoords}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.dropoffCoords}
-                  className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    errors.dropoffCoords ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="X: 789, Y: 64, Z: -101"
-                />
-                <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" aria-hidden="true" focusable="false" />
-              </div>
-              {errors.dropoffCoords && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.dropoffCoords}</p>
-              )}
-            </div>
-
-            {/* Item Description */}
-            <div>
-              <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-300 mb-2">
-                Item Description *
-              </label>
-              <div className="relative">
-                <textarea
-                  id="itemDescription"
-                  name="itemDescription"
-                  value={formData.itemDescription}
-                  onChange={handleChange}
-                  rows={4}
-                  aria-invalid={!!errors.itemDescription}
-                  className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    errors.itemDescription ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="Describe what you need delivered. Be specific or I'll deliver the wrong thing on purpose."
-                />
-                <Package className="absolute right-3 top-3 h-5 w-5 text-gray-400" aria-hidden="true" focusable="false" />
-              </div>
-              {errors.itemDescription && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.itemDescription}</p>
-              )}
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
-                Notes (Optional)
-              </label>
-              <textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                rows={2}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                placeholder="Anything else I should know? Bribes, threats, secret handshakes..."
-              />
-            </div>
-
-            {/* Payment Offer */}
-            <div>
-              <label htmlFor="paymentOffer" className="block text-sm font-medium text-gray-300 mb-2">
-                Payment Offer * 
-                {formData.itemQuantity && formData.urgency && (
-                  <span className="text-blue-400 text-xs ml-2">
-                    (Estimated: {calculateEstimatedCost()} diamonds)
-                  </span>
+              {/* IGN Field */}
+              <div>
+                <label htmlFor="ign" className="block text-sm font-medium text-gray-300 mb-2">
+                  Minecraft Username *
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="ign"
+                    name="ign"
+                    value={formData.ign}
+                    onChange={handleChange}
+                    aria-invalid={!!errors.ign}
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                      errors.ign ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                    placeholder="YourMinecraftUsername"
+                  />
+                  <MessageCircle className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.ign && (
+                  <p className="text-red-400 text-sm mt-1">{errors.ign}</p>
                 )}
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="paymentOffer"
-                  name="paymentOffer"
-                  value={formData.paymentOffer}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.paymentOffer}
-                  className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                    errors.paymentOffer ? 'border-red-500' : 'border-gray-600'
-                  }`}
-                  placeholder="15 diamonds, 30 diamonds, or whatever you can afford"
-                />
-                <Diamond className="absolute right-3 top-3 h-5 w-5 text-gray-400" aria-hidden="true" focusable="false" />
               </div>
-              {errors.paymentOffer && (
-                <p className="text-red-400 text-sm mt-1" aria-live="polite">{errors.paymentOffer}</p>
+
+              {/* Item Description */}
+              <div>
+                <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-300 mb-2">
+                  What needs to be delivered? *
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="itemDescription"
+                    name="itemDescription"
+                    value={formData.itemDescription}
+                    onChange={handleChange}
+                    aria-invalid={!!errors.itemDescription}
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                      errors.itemDescription ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                    placeholder="e.g., 64 oak logs, diamond pickaxe, 5 stacks of cobblestone"
+                  />
+                  <Package className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.itemDescription && (
+                  <p className="text-red-400 text-sm mt-1">{errors.itemDescription}</p>
+                )}
+              </div>
+
+              {/* Coordinates Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="pickupCoords" className="block text-sm font-medium text-gray-300 mb-2">
+                    Pickup Location *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="pickupCoords"
+                      name="pickupCoords"
+                      value={formData.pickupCoords}
+                      onChange={handleCoordChange}
+                      aria-invalid={!!errors.pickupCoords}
+                      className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                        errors.pickupCoords ? 'border-red-500' : 'border-gray-600'
+                      }`}
+                      placeholder="100, 64, -200"
+                    />
+                    <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                  </div>
+                  {errors.pickupCoords && (
+                    <p className="text-red-400 text-sm mt-1">{errors.pickupCoords}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="dropoffCoords" className="block text-sm font-medium text-gray-300 mb-2">
+                    Delivery Location *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="dropoffCoords"
+                      name="dropoffCoords"
+                      value={formData.dropoffCoords}
+                      onChange={handleCoordChange}
+                      aria-invalid={!!errors.dropoffCoords}
+                      className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                        errors.dropoffCoords ? 'border-red-500' : 'border-gray-600'
+                      }`}
+                      placeholder="300, 64, 150"
+                    />
+                    <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                  </div>
+                  {errors.dropoffCoords && (
+                    <p className="text-red-400 text-sm mt-1">{errors.dropoffCoords}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Payment Offer */}
+              <div>
+                <label htmlFor="paymentOffer" className="block text-sm font-medium text-gray-300 mb-2">
+                  Payment Offer *
+                  <button
+                    type="button"
+                    onClick={() => setShowPriceCalculator(!showPriceCalculator)}
+                    className="ml-2 text-blue-400 hover:text-blue-300 text-xs"
+                  >
+                    <Calculator className="h-4 w-4 inline" /> Price Calculator
+                  </button>
+                </label>
+                
+                {showPriceCalculator && (
+                  <div className="mb-3 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
+                    <div className="text-sm text-blue-400 mb-2">Estimated Cost: {calculateEstimatedCost()} diamonds</div>
+                    <div className="text-xs text-gray-400">
+                      Based on: {Math.ceil(parseInt(formData.itemQuantity || '64') / 64)} stack(s), {formData.urgency} urgency, {formData.insurance} insurance
+                    </div>
+                  </div>
+                )}
+                
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="paymentOffer"
+                    name="paymentOffer"
+                    value={formData.paymentOffer}
+                    onChange={handleChange}
+                    aria-invalid={!!errors.paymentOffer}
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+                      errors.paymentOffer ? 'border-red-500' : 'border-gray-600'
+                    }`}
+                    placeholder="e.g., 5 diamonds, 10 diamonds"
+                  />
+                  <Diamond className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.paymentOffer && (
+                  <p className="text-red-400 text-sm mt-1">{errors.paymentOffer}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Smart Defaults Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                Service Options
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label htmlFor="urgency" className="block text-sm font-medium text-gray-300 mb-2">
+                    <Clock className="h-4 w-4 inline mr-1" />
+                    Urgency
+                  </label>
+                  <select
+                    id="urgency"
+                    name="urgency"
+                    value={formData.urgency}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  >
+                    <option value="not-urgent">Whenever (20% off)</option>
+                    <option value="soon">Soon-ish (standard)</option>
+                    <option value="urgent">ASAP (+50%)</option>
+                    <option value="life-or-death">Emergency (+100%)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="insurance" className="block text-sm font-medium text-gray-300 mb-2">
+                    <Shield className="h-4 w-4 inline mr-1" />
+                    Insurance
+                  </label>
+                  <select
+                    id="insurance"
+                    name="insurance"
+                    value={formData.insurance}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  >
+                    <option value="none">None (YOLO)</option>
+                    <option value="basic">Basic (+2 diamonds)</option>
+                    <option value="premium">Premium (+5 diamonds)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="itemQuantity" className="block text-sm font-medium text-gray-300 mb-2">
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
+                    id="itemQuantity"
+                    name="itemQuantity"
+                    value={formData.itemQuantity}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    placeholder="64"
+                    min="1"
+                  />
+                  <div className="text-xs text-gray-400 mt-1">
+                    {formData.itemQuantity && `~${Math.ceil(parseInt(formData.itemQuantity) / 64)} stack(s)`}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Progressive Disclosure - Advanced Options */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                Advanced Options (Optional)
+              </button>
+
+              {showAdvanced && (
+                <div className="mt-4 space-y-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="contactName" className="block text-sm font-medium text-gray-300 mb-2">
+                        Contact Name
+                      </label>
+                      <input
+                        type="text"
+                        id="contactName"
+                        name="contactName"
+                        value={formData.contactName}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                        placeholder="Your name or IGN"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="deadline" className="block text-sm font-medium text-gray-300 mb-2">
+                        Deadline
+                      </label>
+                      <input
+                        type="date"
+                        id="deadline"
+                        name="deadline"
+                        value={formData.deadline}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
+                      Special Instructions
+                    </label>
+                    <textarea
+                      id="notes"
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                      placeholder="Any special instructions, dangers, or notes..."
+                    />
+                  </div>
+                </div>
               )}
             </div>
 
-            {/* Contact Method */}
-            <div>
-              <label htmlFor="contactMethod" className="block text-sm font-medium text-gray-300 mb-2">
-                Contact Method *
-              </label>
-              <select
-                id="contactMethod"
-                name="contactMethod"
-                value={formData.contactMethod}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              >
-                <option value="discord">Discord</option>
-                <option value="ingame">In-game message</option>
-                <option value="email" disabled>Email (You thought this was real? Cute.)</option>
-              </select>
-            </div>
-
-            {/* Order Summary Preview */}
-            {(formData.itemType || formData.itemQuantity || formData.paymentOffer) && (
+            {/* Order Summary */}
+            {(formData.itemDescription || formData.paymentOffer) && (
               <div className="bg-gray-700 rounded-lg p-4 border border-gray-600">
                 <div className="flex items-center gap-2 mb-3">
                   <Package className="h-4 w-4 text-blue-400" />
                   <span className="text-white font-medium">Order Summary</span>
                 </div>
                 <div className="space-y-2 text-sm">
-                  {formData.itemType && (
+                  {formData.itemDescription && (
                     <div className="flex justify-between">
-                      <span className="text-gray-300">Item:</span>
-                      <span className="text-white">{formData.itemType}</span>
+                      <span className="text-gray-300">Items:</span>
+                      <span className="text-white">{formData.itemDescription}</span>
                     </div>
                   )}
                   {formData.itemQuantity && (
@@ -547,12 +563,10 @@ const JobForm: React.FC = () => {
                       </span>
                     </div>
                   )}
-                  {formData.urgency && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Urgency:</span>
-                      <span className="text-white capitalize">{formData.urgency.replace('-', ' ')}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Service:</span>
+                    <span className="text-white capitalize">{formData.urgency.replace('-', ' ')} • {formData.insurance} insurance</span>
+                  </div>
                   {formData.paymentOffer && (
                     <div className="flex justify-between border-t border-gray-600 pt-2">
                       <span className="text-gray-300">Payment:</span>
@@ -567,8 +581,8 @@ const JobForm: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 ${
-                isSubmitting ? 'opacity-75 cursor-not-allowed' : 'hover:scale-105'
+              className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 ${
+                isSubmitting ? 'opacity-75 cursor-not-allowed' : 'hover:scale-105 shadow-lg'
               }`}
             >
               {isSubmitting ? (
@@ -578,24 +592,23 @@ const JobForm: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Send className="h-5 w-5" aria-hidden="true" focusable="false" />
-                  Submit Job (Because You Won't)
+                  <Send className="h-5 w-5" />
+                  Submit Job Request
                 </>
               )}
             </button>
 
-            {/* Form Tips */}
+            {/* Help Tips */}
             <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-blue-400 font-medium mb-2">Pro Tips:</h4>
+                  <h4 className="text-blue-400 font-medium mb-2">Quick Tips:</h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• Be specific with coordinates (include Y-level)</li>
-                    <li>• Mention if the area is dangerous or protected</li>
-                    <li>• Quantity = total items (64 dirt = 1 stack, 320 dirt = 5 stacks)</li>
-                    <li>• Payment is due upon pickup, not delivery</li>
-                    <li>• Rush orders cost extra but get priority treatment</li>
+                    <li>• Coordinates: Use F3 to get exact location (X Y Z format)</li>
+                    <li>• Payment: Due at pickup, not delivery</li>
+                    <li>• Contact: I'll message you on Discord for coordination</li>
+                    <li>• Quantity: Total items (64 = 1 stack for most items)</li>
                   </ul>
                 </div>
               </div>
