@@ -46,7 +46,10 @@ const Header: React.FC = () => {
             
             {/* Notification Bell */}
             <div className="relative">
-              <button className="text-gray-300 hover:text-blue-400 transition-colors p-2">
+              <button 
+                onClick={() => alert('📦 New delivery requests available!\n\n• BuilderBob2024: 64 Oak Logs\n• NoobMiner: Emergency food delivery\n• PvPMaster: Diamond armor transport')}
+                className="text-gray-300 hover:text-blue-400 transition-colors p-2"
+              >
                 <Bell className="h-5 w-5" />
                 {notifications > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">

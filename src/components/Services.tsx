@@ -60,6 +60,15 @@ const Services: React.FC = () => {
             <div
               key={index}
               className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-[1.02] group cursor-pointer"
+              onClick={() => {
+                const serviceDetails = {
+                  "Item Delivery": "Standard delivery service:\n• 5-15 diamonds depending on distance\n• 2-6 hour delivery window\n• All items accepted (except illegal stuff)\n• Secure ender chest backup",
+                  "Rush Delivery": "Express delivery service:\n• 1.5x standard pricing\n• Priority queue access\n• 1-3 hour delivery window\n• Perfect for urgent builds",
+                  "Secure Transport": "Premium security service:\n• +5 diamonds insurance fee\n• Multiple backup systems\n• Dangerous route protection\n• 100% loss protection guarantee",
+                  "Bulk Orders": "Volume delivery service:\n• 10% discount on 5+ stacks\n• 20% discount on 20+ stacks\n• Organized delivery schedule\n• Perfect for large builds"
+                };
+                alert(serviceDetails[service.title as keyof typeof serviceDetails] || 'Service details coming soon!');
+              }}
             >
               <div className={`flex items-center justify-center w-12 h-12 rounded-lg mb-4 transition-colors ${getColorClasses(service.color)}`}>
                 <service.icon className="h-6 w-6 text-white" />
@@ -78,9 +87,9 @@ const Services: React.FC = () => {
               </ul>
               
               <div className="mt-4 pt-4 border-t border-gray-700">
-                <span className="text-blue-400 text-sm font-medium group-hover:text-blue-300 transition-colors">
+                <button className="text-blue-400 text-sm font-medium group-hover:text-blue-300 transition-colors w-full text-left">
                   Learn more →
-                </span>
+                </button>
               </div>
             </div>
           ))}

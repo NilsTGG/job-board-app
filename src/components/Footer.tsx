@@ -38,13 +38,34 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-white font-semibold mb-4">Connect</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert('Discord: NilsTG#1234\n\nJoin our server for live delivery updates and support!');
+                }}
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Discord className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert('Twitter: @BecauseYouWont\n\nFollow for delivery updates and sarcastic commentary!');
+                }}
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a 
+                href="#" 
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert('GitHub: github.com/nilstgg/minecraft-delivery\n\nCheck out the delivery tracking system!');
+                }}
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
                 <Github className="h-5 w-5" />
               </a>
             </div>
