@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, Heart, Github, Twitter, Discord } from 'lucide-react';
+import { Package, Heart, Github, Twitter, Disc as Discord } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
