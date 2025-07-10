@@ -45,8 +45,7 @@ const Stats: React.FC = () => {
       green: "bg-green-600 group-hover:bg-green-500 text-green-400", 
       yellow: "bg-yellow-600 group-hover:bg-yellow-500 text-yellow-400",
       purple: "bg-purple-600 group-hover:bg-purple-500 text-purple-400",
-    },
-  ];
+    };
     return colors[color as keyof typeof colors] || colors.blue;
   };
 
