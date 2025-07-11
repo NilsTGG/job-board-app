@@ -15,7 +15,11 @@ const FAQ: React.FC = () => {
 
   const faqItems = [
     {
-      question: "Why would I pay extra when I could just get it myself?",
+      question: "But shulkers are free now, why would I pay for delivery?",
+      answer: "So is walking. Doesn't mean you want to spend your evening doing inventory management instead of creating something awesome. Free shulkers don't make the journey less boring or your time less valuable."
+    },
+    {
+      question: "Why would I pay extra when I could just do it myself?",
       answer: "Because you won't. That's literally the name of the service. You're paying for your time, zero risk, and the guarantee it actually gets done instead of sitting in your 'I'll do it later' pile."
     },
     {

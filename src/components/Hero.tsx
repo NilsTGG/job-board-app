@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Minecraft delivery service for lazy players with diamonds to burn.
+            Minecraft delivery service for players whose time is worth more than transport costs.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">

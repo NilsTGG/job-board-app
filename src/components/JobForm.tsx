@@ -408,6 +408,9 @@ const JobForm: React.FC = () => {
                     <div className="text-xs text-gray-400">
                       Based on: {Math.ceil(parseInt(formData.itemQuantity || '64') / 64)} stack(s), {formData.urgency} urgency, {formData.insurance} insurance
                     </div>
+                    <div className="text-xs text-blue-300 mt-2 italic">
+                      💡 Time saved: ~{Math.ceil(parseInt(formData.itemQuantity || '64') / 64) * 15} minutes of boring transport work
+                    </div>
                   </div>
                 )}
                 
@@ -603,8 +606,10 @@ const JobForm: React.FC = () => {
                   <ul className="text-sm text-gray-300 space-y-1">
                     <li>• <strong>Delivery:</strong> You have items, I move them. Payment due at pickup.</li>
                     <li>• <strong>Shopping:</strong> I buy items for you. You pay me back + service fee.</li>
+                    <li>• <strong>Time Value:</strong> Your gaming time > diamond cost. Focus on building, not hauling.</li>
                     <li>• <strong>Coordinates:</strong> Use F3 for exact location (X Y Z format)</li>
                     <li>• <strong>Dangerous areas:</strong> Nether/End/PvP zones cost extra (danger tax)</li>
+                    <li>• <strong>Multi-shop runs:</strong> List all shops for bulk coordination discounts</li>
                   </ul>
                 </div>
               </div>
