@@ -606,7 +606,7 @@ const JobForm: React.FC = () => {
                   <ul className="text-sm text-gray-300 space-y-1">
                     <li>• <strong>Delivery:</strong> You have items, I move them. Payment due at pickup.</li>
                     <li>• <strong>Shopping:</strong> I buy items for you. You pay me back + service fee.</li>
-                    <li>• <strong>Time Value:</strong> Your gaming time > diamond cost. Focus on building, not hauling.</li>
+                    <li>• <strong>Time Value:</strong> Your gaming time {'>'} diamond cost. Focus on building, not hauling.</li>
                     <li>• <strong>Coordinates:</strong> Use F3 for exact location (X Y Z format)</li>
                     <li>• <strong>Dangerous areas:</strong> Nether/End/PvP zones cost extra (danger tax)</li>
                     <li>• <strong>Multi-shop runs:</strong> List all shops for bulk coordination discounts</li>
