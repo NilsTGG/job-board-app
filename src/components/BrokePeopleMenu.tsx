@@ -154,7 +154,10 @@ const BrokePeopleMenu: React.FC = () => {
                           <div className="flex-1">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                               <h4 className="text-white font-medium">{item.service}</h4>
-                              <div className="text-yellow-400 font-bold">{item.price}</div>
+                              <div className="text-yellow-400 font-bold flex items-center gap-2">
+                                {item.price}
+                                {index === 2 && <Shield className="h-4 w-4 text-blue-400" />}
+                              </div>
                             </div>
                             <p className="text-gray-400 text-sm mt-1">{item.notes}</p>
                           </div>

@@ -1,102 +1,170 @@
-import React, { useState, useEffect } from 'react';
-import { Send, MapPin, Package, MessageCircle, Diamond, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, Calculator, Clock, Shield } from 'lucide-react';
-import AccessibleSelect from './AccessibleSelect';
+import React, { useState, useEffect } from "react";
+import {
+  Send,
+  MapPin,
+  Package,
+  MessageCircle,
+  Diamond,
+  AlertCircle,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Calculator,
+  Clock,
+  Shield,
+} from "lucide-react";
+import AccessibleSelect from "./AccessibleSelect";
+import { useForm, ValidationError } from "@formspree/react";
 
 const JobForm: React.FC = () => {
   const [formData, setFormData] = useState({
     // Essential fields (always visible)
-    ign: '',
-    itemDescription: '',
-    pickupCoords: '',
-    dropoffCoords: '',
-    paymentOffer: '',
-    
+    ign: "",
+    discordUsername: "",
+    itemDescription: "",
+    pickupCoords: "",
+    dropoffCoords: "",
+    paymentOffer: "",
+
     // Smart defaults
-    contactMethod: 'discord',
-    urgency: 'soon',
-    insurance: 'basic',
-    itemQuantity: '64',
-    
+    contactMethod: "discord",
+    urgency: "soon",
+    insurance: "basic",
+    itemQuantity: "64",
+
     // Optional fields (progressive disclosure)
-    contactName: '',
-    deadline: '',
-    notes: '',
-    itemType: ''
+    contactName: "",
+    deadline: "",
+    notes: "",
+    itemType: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showPriceCalculator, setShowPriceCalculator] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
+  // Formspree integration
+  const [state, handleSubmit] = useForm("xqabvypp");
+
   // Options for accessible selects
   const urgencyOptions = [
-    { value: 'not-urgent', label: 'Whenever', description: '20% discount - I\'ll get to it eventually' },
-    { value: 'soon', label: 'Soon-ish', description: 'Standard pricing - reasonable timeframe' },
-    { value: 'urgent', label: 'ASAP', description: '+50% surcharge - priority queue' },
-    { value: 'life-or-death', label: 'Emergency', description: '+100% surcharge - drop everything mode' }
+    {
+      value: "not-urgent",
+      label: "Whenever",
+      description: "20% discount - I'll get to it eventually",
+    },
+    {
+      value: "soon",
+      label: "Soon-ish",
+      description: "Standard pricing - reasonable timeframe",
+    },
+    {
+      value: "urgent",
+      label: "ASAP",
+      description: "+50% surcharge - priority queue",
+    },
+    {
+      value: "life-or-death",
+      label: "Emergency",
+      description: "+100% surcharge - drop everything mode",
+    },
   ];
 
   const insuranceOptions = [
-    { value: 'none', label: 'None (YOLO)', description: 'No protection - live dangerously' },
-    { value: 'basic', label: 'Basic Protection', description: '+2 diamonds - standard coverage' },
-    { value: 'premium', label: 'Premium Coverage', description: '+5 diamonds - full protection guarantee' }
+    {
+      value: "none",
+      label: "None (YOLO)",
+      description: "No protection - live dangerously",
+    },
+    {
+      value: "basic",
+      label: "Basic Protection",
+      description: "+2 diamonds - standard coverage",
+    },
+    {
+      value: "premium",
+      label: "Premium Coverage",
+      description: "+5 diamonds - full protection guarantee",
+    },
   ];
 
   const contactOptions = [
-    { value: 'discord', label: 'Discord', description: 'Fastest response time' },
-    { value: 'minecraft', label: 'In-game chat', description: 'When I\'m online' },
-    { value: 'reddit', label: 'Reddit DM', description: 'Slower but reliable' }
+    {
+      value: "discord",
+      label: "Discord",
+      description: "Fastest response time",
+    },
+    {
+      value: "minecraft",
+      label: "In-game chat",
+      description: "When I'm online",
+    },
+    { value: "reddit", label: "Reddit DM", description: "Slower but reliable" },
   ];
 
   // Auto-save to localStorage
   useEffect(() => {
-    const savedData = localStorage.getItem('jobForm_draft');
+    const savedData = localStorage.getItem("jobForm_draft");
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        setFormData(prev => ({ ...prev, ...parsed }));
+        setFormData((prev) => ({ ...prev, ...parsed }));
       } catch (e) {
-        console.warn('Failed to load saved form data');
+        console.warn("Failed to load saved form data");
       }
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('jobForm_draft', JSON.stringify(formData));
+    localStorage.setItem("jobForm_draft", JSON.stringify(formData));
   }, [formData]);
 
   // Smart validation with contextual messages
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
+    // Discord username validation (new Discord rules)
+    if (!formData.discordUsername.trim()) {
+      newErrors.discordUsername = "Discord username is required";
+    } else if (
+      !/^(?!.*\.\.)([a-z0-9._]{2,32})$/.test(formData.discordUsername.trim())
+    ) {
+      newErrors.discordUsername =
+        "2-32 chars, lowercase letters, numbers, periods/underscores, no consecutive periods";
+    }
+
     // IGN validation with helpful suggestions
     if (!formData.ign.trim()) {
       newErrors.ign = "Your Minecraft username is required";
     } else if (!/^[a-zA-Z0-9_]{3,16}$/.test(formData.ign.trim())) {
-      newErrors.ign = "Minecraft usernames are 3-16 characters (letters, numbers, underscores only)";
+      newErrors.ign =
+        "Minecraft usernames are 3-16 characters (letters, numbers, underscores only)";
     }
 
     // Item description with smart suggestions
     if (!formData.itemDescription.trim()) {
       newErrors.itemDescription = "What should I deliver?";
     } else if (formData.itemDescription.trim().length < 3) {
-      newErrors.itemDescription = "Please be more specific (at least 3 characters)";
+      newErrors.itemDescription =
+        "Please be more specific (at least 3 characters)";
     }
 
     // Coordinate validation with format help
     const coordPattern = /^-?\d+\s*,?\s*-?\d+\s*,?\s*-?\d+$/;
     if (!formData.pickupCoords.trim()) {
       newErrors.pickupCoords = "Where should I pick up the items?";
-    } else if (!coordPattern.test(formData.pickupCoords.replace(/[XYZxyz:\s]/g, ''))) {
+    } else if (
+      !coordPattern.test(formData.pickupCoords.replace(/[XYZxyz:\s]/g, ""))
+    ) {
       newErrors.pickupCoords = "Format: X Y Z or X,Y,Z (e.g., 100 64 -200)";
     }
 
     if (!formData.dropoffCoords.trim()) {
       newErrors.dropoffCoords = "Where should I deliver the items?";
-    } else if (!coordPattern.test(formData.dropoffCoords.replace(/[XYZxyz:\s]/g, ''))) {
+    } else if (
+      !coordPattern.test(formData.dropoffCoords.replace(/[XYZxyz:\s]/g, ""))
+    ) {
       newErrors.dropoffCoords = "Format: X Y Z or X,Y,Z (e.g., 100 64 -200)";
     }
 
@@ -108,7 +176,11 @@ const JobForm: React.FC = () => {
     }
 
     // Quantity validation
-    if (formData.itemQuantity && (isNaN(Number(formData.itemQuantity)) || Number(formData.itemQuantity) <= 0)) {
+    if (
+      formData.itemQuantity &&
+      (isNaN(Number(formData.itemQuantity)) ||
+        Number(formData.itemQuantity) <= 0)
+    ) {
       newErrors.itemQuantity = "Quantity must be a positive number";
     }
 
@@ -121,61 +193,41 @@ const JobForm: React.FC = () => {
     const quantity = parseInt(formData.itemQuantity) || 64;
     const urgency = formData.urgency;
     const insurance = formData.insurance;
-    
+
     // Base cost: 3 diamonds minimum, +1 per stack
     let baseCost = Math.max(3, Math.ceil(quantity / 64) + 2);
-    
+
     // Urgency multipliers
     const urgencyMultipliers = {
-      'not-urgent': 0.8,
-      'soon': 1,
-      'urgent': 1.5,
-      'life-or-death': 2
+      "not-urgent": 0.8,
+      soon: 1,
+      urgent: 1.5,
+      "life-or-death": 2,
     };
-    
-    baseCost *= urgencyMultipliers[urgency as keyof typeof urgencyMultipliers] || 1;
-    
+
+    baseCost *=
+      urgencyMultipliers[urgency as keyof typeof urgencyMultipliers] || 1;
+
     // Insurance costs
-    if (insurance === 'premium') baseCost += 5;
-    if (insurance === 'basic') baseCost += 2;
-    
+    if (insurance === "premium") baseCost += 5;
+    if (insurance === "basic") baseCost += 2;
+
     return Math.ceil(baseCost);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      // Scroll to first error
-      const firstError = Object.keys(errors)[0];
-      const element = document.getElementById(firstError);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.focus();
-      }
-      return;
-    }
+  // Remove custom handleSubmit, use Formspree's handleSubmit instead
 
-    setIsSubmitting(true);
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setIsSubmitted(true);
-      localStorage.removeItem('jobForm_draft'); // Clear saved data
-    } catch (error) {
-      console.error('Form submission error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
@@ -185,15 +237,34 @@ const JobForm: React.FC = () => {
     // Auto-format common coordinate patterns
     let formatted = value;
     if (value.match(/^\d+\s+\d+\s+\d+$/)) {
-      formatted = value.replace(/\s+/g, ', ');
+      formatted = value.replace(/\s+/g, ", ");
     }
-    setFormData(prev => ({ ...prev, [name]: formatted }));
+    setFormData((prev) => ({ ...prev, [name]: formatted }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  if (isSubmitted) {
+  const initialFormData = {
+    ign: "",
+    discordUsername: "",
+    itemDescription: "",
+    pickupCoords: "",
+    dropoffCoords: "",
+    paymentOffer: "",
+    contactMethod: "discord",
+    urgency: "soon",
+    insurance: "basic",
+    itemQuantity: "64",
+    contactName: "",
+    deadline: "",
+    notes: "",
+    itemType: "",
+  };
+
+  const [formKey, setFormKey] = useState(0);
+
+  if (state.succeeded) {
     return (
       <section id="submit-job" className="py-20 bg-gray-900">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -201,13 +272,17 @@ const JobForm: React.FC = () => {
             <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Job Submitted Successfully!</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">
+              Job Submitted Successfully!
+            </h3>
             <p className="text-gray-400 mb-6">
-              Your delivery request has been received. I'll get to it when I get to it. 
-              Check Discord for updates!
+              Your delivery request has been received. I'll get to it when I get
+              to it. Check Discord for updates!
             </p>
             <div className="bg-gray-700 rounded-lg p-4 mb-6">
-              <h4 className="text-white font-medium mb-2">What happens next:</h4>
+              <h4 className="text-white font-medium mb-2">
+                What happens next:
+              </h4>
               <ul className="text-gray-300 text-sm space-y-1 text-left">
                 <li>• I'll review your request within 30 minutes</li>
                 <li>• You'll get a Discord message with pickup details</li>
@@ -216,29 +291,18 @@ const JobForm: React.FC = () => {
               </ul>
             </div>
             <button
+              className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
               onClick={() => {
-                setIsSubmitted(false);
-                setFormData({
-                  ign: '',
-                  itemDescription: '',
-                  pickupCoords: '',
-                  dropoffCoords: '',
-                  paymentOffer: '',
-                  contactMethod: 'discord',
-                  urgency: 'soon',
-                  insurance: 'basic',
-                  itemQuantity: '64',
-                  contactName: '',
-                  deadline: '',
-                  notes: '',
-                  itemType: ''
-                });
+                setFormData(initialFormData);
+                setErrors({});
                 setCurrentStep(1);
-                setShowAdvanced(false);
+                setFormKey((k) => k + 1);
+                localStorage.removeItem("jobForm_draft");
+                // Reset Formspree state by reloading the component
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Submit Another Job
+              Submit another job
             </button>
           </div>
         </div>
@@ -247,8 +311,8 @@ const JobForm: React.FC = () => {
   }
 
   const completedFields = Object.entries(formData).filter(([key, value]) => {
-    if (['contactMethod', 'urgency', 'insurance'].includes(key)) return true; // Smart defaults
-    return value.trim() !== '';
+    if (["contactMethod", "urgency", "insurance"].includes(key)) return true; // Smart defaults
+    return value.trim() !== "";
   }).length;
 
   const totalFields = Object.keys(formData).length;
@@ -266,7 +330,24 @@ const JobForm: React.FC = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-8 border border-gray-700">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (currentStep !== 2) {
+              setCurrentStep(2);
+              setErrors((prev) => ({
+                ...prev,
+                form: "Please complete Step 2 before submitting.",
+              }));
+              return;
+            }
+            if (validateForm()) {
+              handleSubmit(e);
+            }
+          }}
+          method="POST"
+          className="bg-gray-800 rounded-lg p-8 border border-gray-700"
+        >
           {/* Progress Indicator */}
           <div className="mb-8">
             <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
@@ -274,7 +355,7 @@ const JobForm: React.FC = () => {
               <span>{Math.round(progress)}% complete</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2">
-              <div 
+              <div
                 className="bg-gradient-to-r from-blue-600 to-green-600 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               ></div>
@@ -282,15 +363,101 @@ const JobForm: React.FC = () => {
           </div>
 
           <div className="space-y-6">
+            {/* Step Navigation */}
+            <div className="mb-6 flex items-center justify-center gap-4">
+              <button
+                type="button"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${currentStep === 1 ? "bg-blue-600 text-white" : "bg-gray-700 text-gray-300"}`}
+                onClick={() => setCurrentStep(1)}
+              >
+                Step 1
+              </button>
+              <button
+                type="button"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${currentStep === 2 ? "bg-blue-600 text-white" : "bg-gray-700 text-gray-300"}`}
+                onClick={() => {
+                  if (validateForm()) {
+                    setCurrentStep(2);
+                  } else {
+                    setErrors((prev) => ({
+                      ...prev,
+                      form: "Please complete all required fields in Step 1 before proceeding.",
+                    }));
+                  }
+                }}
+              >
+                Step 2
+              </button>
+            </div>
             {/* Step 1: Essential Information */}
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
-                Essential Information
-              </h3>
+            {currentStep === 1 && (
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                  Essential Information
+                </h3>
 
+              {/* Discord Username Field */}
+              <div>
+                <label
+                  htmlFor="discordUsername"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  Discord Username *
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="discordUsername"
+                    name="discordUsername"
+                    value={formData.discordUsername}
+                    onChange={e => {
+                      const lowerValue = e.target.value.toLowerCase();
+                      setFormData(prev => ({ ...prev, discordUsername: lowerValue }));
+                      // Immediate validation for Discord username
+                      let error = "";
+                      if (!lowerValue.trim()) {
+                        error = "Discord username is required";
+                      } else if (
+                        !/^(?!.*\.\.)([a-z0-9._]{2,32})$/.test(lowerValue.trim())
+                      ) {
+                        error =
+                          "2-32 chars, lowercase letters, numbers, periods/underscores, no consecutive periods";
+                      }
+                      setErrors(prev => ({ ...prev, discordUsername: error }));
+                    }}
+                    onBlur={e => {
+                      // Validate again on blur
+                      const lowerValue = e.target.value.toLowerCase();
+                      let error = "";
+                      if (!lowerValue.trim()) {
+                        error = "Discord username is required";
+                      } else if (
+                        !/^(?!.*\.\.)([a-z0-9._]{2,32})$/.test(lowerValue.trim())
+                      ) {
+                        error =
+                          "2-32 chars, lowercase letters, numbers, periods/underscores, no consecutive periods";
+                      }
+                      setErrors(prev => ({ ...prev, discordUsername: error }));
+                    }}
+                    aria-invalid={!!errors.discordUsername}
+                    required
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors ${
+                      errors.discordUsername ? "border-red-500" : "border-gray-600"
+                    }`}
+                    placeholder="Enter your Discord username (lowercase, 2-32 chars, a-z, 0-9, . and _)"
+                  />
+                  <MessageCircle className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                </div>
+                {errors.discordUsername && (
+                  <p className="text-red-400 text-sm mt-1">{errors.discordUsername}</p>
+                )}
+              </div>
               {/* IGN Field */}
               <div>
-                <label htmlFor="ign" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="ign"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Minecraft Username *
                 </label>
                 <div className="relative">
@@ -302,7 +469,7 @@ const JobForm: React.FC = () => {
                     onChange={handleChange}
                     aria-invalid={!!errors.ign}
                     className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                      errors.ign ? 'border-red-500' : 'border-gray-600'
+                      errors.ign ? "border-red-500" : "border-gray-600"
                     }`}
                     placeholder="YourMinecraftUsername"
                   />
@@ -315,7 +482,10 @@ const JobForm: React.FC = () => {
 
               {/* Item Description */}
               <div>
-                <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="itemDescription"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   What do you need? (Delivery or Shopping Service) *
                 </label>
                 <div className="relative">
@@ -327,21 +497,28 @@ const JobForm: React.FC = () => {
                     onChange={handleChange}
                     aria-invalid={!!errors.itemDescription}
                     className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                      errors.itemDescription ? 'border-red-500' : 'border-gray-600'
+                      errors.itemDescription
+                        ? "border-red-500"
+                        : "border-gray-600"
                     }`}
                     placeholder="e.g., 'Deliver: 64 oak logs' or 'Buy me: diamond pickaxe from spawn shops'"
                   />
                   <Package className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.itemDescription && (
-                  <p className="text-red-400 text-sm mt-1">{errors.itemDescription}</p>
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.itemDescription}
+                  </p>
                 )}
               </div>
 
               {/* Coordinates Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="pickupCoords" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="pickupCoords"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Pickup Location *
                   </label>
                   <div className="relative">
@@ -353,19 +530,26 @@ const JobForm: React.FC = () => {
                       onChange={handleCoordChange}
                       aria-invalid={!!errors.pickupCoords}
                       className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                        errors.pickupCoords ? 'border-red-500' : 'border-gray-600'
+                        errors.pickupCoords
+                          ? "border-red-500"
+                          : "border-gray-600"
                       }`}
                       placeholder="100, 64, -200"
                     />
                     <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
                   </div>
                   {errors.pickupCoords && (
-                    <p className="text-red-400 text-sm mt-1">{errors.pickupCoords}</p>
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.pickupCoords}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <label htmlFor="dropoffCoords" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="dropoffCoords"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Delivery Location *
                   </label>
                   <div className="relative">
@@ -377,21 +561,28 @@ const JobForm: React.FC = () => {
                       onChange={handleCoordChange}
                       aria-invalid={!!errors.dropoffCoords}
                       className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                        errors.dropoffCoords ? 'border-red-500' : 'border-gray-600'
+                        errors.dropoffCoords
+                          ? "border-red-500"
+                          : "border-gray-600"
                       }`}
                       placeholder="300, 64, 150"
                     />
                     <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
                   </div>
                   {errors.dropoffCoords && (
-                    <p className="text-red-400 text-sm mt-1">{errors.dropoffCoords}</p>
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.dropoffCoords}
+                    </p>
                   )}
                 </div>
               </div>
 
               {/* Payment Offer */}
               <div>
-                <label htmlFor="paymentOffer" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="paymentOffer"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Payment Offer *
                   <button
                     type="button"
@@ -401,19 +592,27 @@ const JobForm: React.FC = () => {
                     <Calculator className="h-4 w-4 inline" /> Price Calculator
                   </button>
                 </label>
-                
+
                 {showPriceCalculator && (
                   <div className="mb-3 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
-                    <div className="text-sm text-blue-400 mb-2">Estimated Cost: {calculateEstimatedCost()} diamonds</div>
+                    <div className="text-sm text-blue-400 mb-2">
+                      Estimated Cost: {calculateEstimatedCost()} diamonds
+                    </div>
                     <div className="text-xs text-gray-400">
-                      Based on: {Math.ceil(parseInt(formData.itemQuantity || '64') / 64)} stack(s), {formData.urgency} urgency, {formData.insurance} insurance
+                      Based on:{" "}
+                      {Math.ceil(parseInt(formData.itemQuantity || "64") / 64)}{" "}
+                      stack(s), {formData.urgency} urgency, {formData.insurance}{" "}
+                      insurance
                     </div>
                     <div className="text-xs text-blue-300 mt-2 italic">
-                      💡 Time saved: ~{Math.ceil(parseInt(formData.itemQuantity || '64') / 64) * 15} minutes of boring transport work
+                      💡 Time saved: ~
+                      {Math.ceil(parseInt(formData.itemQuantity || "64") / 64) *
+                        15}{" "}
+                      minutes of boring transport work
                     </div>
                   </div>
                 )}
-                
+
                 <div className="relative">
                   <input
                     type="text"
@@ -423,31 +622,36 @@ const JobForm: React.FC = () => {
                     onChange={handleChange}
                     aria-invalid={!!errors.paymentOffer}
                     className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                      errors.paymentOffer ? 'border-red-500' : 'border-gray-600'
+                      errors.paymentOffer ? "border-red-500" : "border-gray-600"
                     }`}
                     placeholder="e.g., 5 diamonds, 10 diamonds"
                   />
                   <Diamond className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
                 </div>
                 {errors.paymentOffer && (
-                  <p className="text-red-400 text-sm mt-1">{errors.paymentOffer}</p>
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.paymentOffer}
+                  </p>
                 )}
+                </div>
               </div>
-            </div>
-
+            )}
             {/* Smart Defaults Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
-                Service Options
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {currentStep === 2 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                  Service Options
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <AccessibleSelect
                   id="urgency"
                   label="Urgency"
                   options={urgencyOptions}
                   value={formData.urgency}
-                  onChange={(value) => setFormData(prev => ({ ...prev, urgency: value }))}
+                  onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, urgency: value }))
+                  }
                   searchable={false}
                 />
 
@@ -456,30 +660,40 @@ const JobForm: React.FC = () => {
                   label="Insurance"
                   options={insuranceOptions}
                   value={formData.insurance}
-                  onChange={(value) => setFormData(prev => ({ ...prev, insurance: value }))}
+                  onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, insurance: value }))
+                  }
                   searchable={false}
                 />
+                <Shield className="h-4 w-4 text-blue-400 mt-2" />
 
                 <div>
-                  <label htmlFor="itemQuantity" className="block text-sm font-medium text-gray-300 mb-2">
-                    Quantity
+                  <label
+                  htmlFor="itemQuantity"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                  Quantity
                   </label>
                   <input
-                    type="number"
-                    id="itemQuantity"
-                    name="itemQuantity"
-                    value={formData.itemQuantity}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                    placeholder="64"
-                    min="1"
+                  type="number"
+                  id="itemQuantity"
+                  name="itemQuantity"
+                  value={formData.itemQuantity}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  placeholder="64"
+                  min="1"
                   />
                   <div className="text-xs text-gray-400 mt-1">
-                    {formData.itemQuantity && `~${Math.ceil(parseInt(formData.itemQuantity) / 64)} stack(s)`}
+                  {formData.itemQuantity &&
+                    `~${Math.ceil(
+                    parseInt(formData.itemQuantity) / 64
+                    )} stack(s)`}
                   </div>
                 </div>
-              </div>
+                </div>
             </div>
+            )}
 
             {/* Progressive Disclosure - Advanced Options */}
             <div>
@@ -488,7 +702,11 @@ const JobForm: React.FC = () => {
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
               >
-                {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {showAdvanced ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
                 Advanced Options (Optional)
               </button>
 
@@ -500,13 +718,21 @@ const JobForm: React.FC = () => {
                       label="Preferred Contact Method"
                       options={contactOptions}
                       value={formData.contactMethod}
-                      onChange={(value) => setFormData(prev => ({ ...prev, contactMethod: value }))}
+                      onChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          contactMethod: value,
+                        }))
+                      }
                       searchable={false}
                     />
 
                     <div>
-                      <label htmlFor="deadline" className="block text-sm font-medium text-gray-300 mb-2">
-                        Deadline
+                      <label
+                        htmlFor="deadline"
+                        className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2"
+                      >
+                        Deadline <Clock className="h-4 w-4 text-blue-400" />
                       </label>
                       <input
                         type="date"
@@ -520,7 +746,10 @@ const JobForm: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label
+                      htmlFor="notes"
+                      className="block text-sm font-medium text-gray-300 mb-2"
+                    >
                       Special Instructions
                     </label>
                     <textarea
@@ -548,43 +777,64 @@ const JobForm: React.FC = () => {
                   {formData.itemDescription && (
                     <div className="flex justify-between">
                       <span className="text-gray-300">Items:</span>
-                      <span className="text-white">{formData.itemDescription}</span>
+                      <span className="text-white">
+                        {formData.itemDescription}
+                      </span>
                     </div>
                   )}
                   {formData.itemQuantity && (
                     <div className="flex justify-between">
                       <span className="text-gray-300">Quantity:</span>
                       <span className="text-white">
-                        {formData.itemQuantity} items 
+                        {formData.itemQuantity} items
                         <span className="text-gray-400 text-xs ml-1">
-                          (~{Math.ceil(parseInt(formData.itemQuantity) / 64)} stacks)
+                          (~{Math.ceil(parseInt(formData.itemQuantity) / 64)}{" "}
+                          stacks)
                         </span>
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-gray-300">Service:</span>
-                    <span className="text-white capitalize">{formData.urgency.replace('-', ' ')} • {formData.insurance} insurance</span>
+                    <span className="text-white capitalize">
+                      {formData.urgency.replace("-", " ")} •{" "}
+                      {formData.insurance} insurance
+                    </span>
                   </div>
                   {formData.paymentOffer && (
                     <div className="flex justify-between border-t border-gray-600 pt-2">
                       <span className="text-gray-300">Payment:</span>
-                      <span className="text-blue-400 font-medium">{formData.paymentOffer}</span>
+                      <span className="text-blue-400 font-medium">
+                        {formData.paymentOffer}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
             )}
 
+{/* Hidden required fields from Step 1 for submission */}
+            {currentStep === 2 && (
+              <>
+                <input type="hidden" name="discordUsername" value={formData.discordUsername} />
+                <input type="hidden" name="ign" value={formData.ign} />
+                <input type="hidden" name="itemDescription" value={formData.itemDescription} />
+                <input type="hidden" name="pickupCoords" value={formData.pickupCoords} />
+                <input type="hidden" name="dropoffCoords" value={formData.dropoffCoords} />
+                <input type="hidden" name="paymentOffer" value={formData.paymentOffer} />
+              </>
+            )}
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={state.submitting}
               className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2 ${
-                isSubmitting ? 'opacity-75 cursor-not-allowed' : 'hover:scale-105 shadow-lg'
+                state.submitting
+                  ? "opacity-75 cursor-not-allowed"
+                  : "hover:scale-105 shadow-lg"
               }`}
             >
-              {isSubmitting ? (
+              {state.submitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   Processing Your Request...
@@ -596,20 +846,45 @@ const JobForm: React.FC = () => {
                 </>
               )}
             </button>
-
+            <ValidationError prefix="Job" field="discordUsername" errors={state.errors} />
+            <ValidationError prefix="Job" field="ign" errors={state.errors} />
+            <ValidationError prefix="Job" field="itemDescription" errors={state.errors} />
+            <ValidationError prefix="Job" field="pickupCoords" errors={state.errors} />
+            <ValidationError prefix="Job" field="dropoffCoords" errors={state.errors} />
+            <ValidationError prefix="Job" field="paymentOffer" errors={state.errors} />
             {/* Help Tips */}
             <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-blue-400 font-medium mb-2">Quick Tips:</h4>
+                  <h4 className="text-blue-400 font-medium mb-2">
+                    Quick Tips:
+                  </h4>
                   <ul className="text-sm text-gray-300 space-y-1">
-                    <li>• <strong>Delivery:</strong> You have items, I move them. Payment due at pickup.</li>
-                    <li>• <strong>Shopping:</strong> I buy items for you. You pay me back + service fee.</li>
-                    <li>• <strong>Time Value:</strong> Your gaming time {'>'} diamond cost. Focus on building, not hauling.</li>
-                    <li>• <strong>Coordinates:</strong> Use F3 for exact location (X Y Z format)</li>
-                    <li>• <strong>Dangerous areas:</strong> Nether/End/PvP zones cost extra (danger tax)</li>
-                    <li>• <strong>Multi-shop runs:</strong> List all shops for bulk coordination discounts</li>
+                    <li>
+                      • <strong>Delivery:</strong> You have items, I move them.
+                      Payment due at pickup.
+                    </li>
+                    <li>
+                      • <strong>Shopping:</strong> I buy items for you. You pay
+                      me back + service fee.
+                    </li>
+                    <li>
+                      • <strong>Time Value:</strong> Your gaming time {">"}{" "}
+                      diamond cost. Focus on building, not hauling.
+                    </li>
+                    <li>
+                      • <strong>Coordinates:</strong> Use F3 for exact location
+                      (X Y Z format)
+                    </li>
+                    <li>
+                      • <strong>Dangerous areas:</strong> Nether/End/PvP zones
+                      cost extra (danger tax)
+                    </li>
+                    <li>
+                      • <strong>Multi-shop runs:</strong> List all shops for
+                      bulk coordination discounts
+                    </li>
                   </ul>
                 </div>
               </div>
