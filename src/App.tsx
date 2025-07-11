@@ -7,6 +7,7 @@ import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
 import JobForm from './components/JobForm';
 import CourierProfile from './components/CourierProfile';
+import BrokePeopleMenu from './components/BrokePeopleMenu';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import { useKonamiCode } from './hooks/useKonamiCode';
@@ -78,6 +79,7 @@ function App() {
           <Pricing />
           <Testimonials />
           <JobForm />
+          <BrokePeopleMenu />
           <CourierProfile />
           <FAQ />
           <Footer />
