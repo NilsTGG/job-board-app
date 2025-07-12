@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import AccessibleSelect from "./AccessibleSelect";
 import { useForm, ValidationError } from "@formspree/react";
+import { FORM_VALIDATION, UI_CONFIG, SERVICES, STORAGE_KEYS, ERROR_MESSAGES } from '../constants';
+import { useDebounce } from '../hooks/useDebounce';
 
 const JobForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -47,65 +49,17 @@ const JobForm: React.FC = () => {
   // Formspree integration
   const [state, handleSubmit] = useForm("xqabvypp");
 
+  // Debounce form data for validation and auto-save
+  const debouncedFormData = useDebounce(formData, UI_CONFIG.DEBOUNCE_DELAY);
+
   // Options for accessible selects
-  const urgencyOptions = [
-    {
-      value: "not-urgent",
-      label: "Whenever",
-      description: "20% discount - I'll get to it eventually",
-    },
-    {
-      value: "soon",
-      label: "Soon-ish",
-      description: "Standard pricing - reasonable timeframe",
-    },
-    {
-      value: "urgent",
-      label: "ASAP",
-      description: "+50% surcharge - priority queue",
-    },
-    {
-      value: "life-or-death",
-      label: "Emergency",
-      description: "+100% surcharge - drop everything mode",
-    },
-  ];
-
-  const insuranceOptions = [
-    {
-      value: "none",
-      label: "None (YOLO)",
-      description: "No protection - live dangerously",
-    },
-    {
-      value: "basic",
-      label: "Basic Protection",
-      description: "+2 diamonds - standard coverage",
-    },
-    {
-      value: "premium",
-      label: "Premium Coverage",
-      description: "+5 diamonds - full protection guarantee",
-    },
-  ];
-
-  const contactOptions = [
-    {
-      value: "discord",
-      label: "Discord",
-      description: "Fastest response time",
-    },
-    {
-      value: "minecraft",
-      label: "In-game chat",
-      description: "When I'm online",
-    },
-    { value: "reddit", label: "Reddit DM", description: "Slower but reliable" },
-  ];
+  const urgencyOptions = SERVICES.URGENCY_OPTIONS;
+  const insuranceOptions = SERVICES.INSURANCE_OPTIONS;
+  const contactOptions = SERVICES.CONTACT_OPTIONS;
 
   // Auto-save to localStorage
   useEffect(() => {
-    const savedData = localStorage.getItem("jobForm_draft");
+    const savedData = localStorage.getItem(STORAGE_KEYS.FORM_DRAFT);
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
@@ -117,8 +71,8 @@ const JobForm: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("jobForm_draft", JSON.stringify(formData));
-  }, [formData]);
+    localStorage.setItem(STORAGE_KEYS.FORM_DRAFT, JSON.stringify(debouncedFormData));
+  }, [debouncedFormData]);
 
   // Smart validation with contextual messages
   const validateForm = () => {
@@ -126,53 +80,47 @@ const JobForm: React.FC = () => {
 
     // Discord username validation (new Discord rules)
     if (!formData.discordUsername.trim()) {
-      newErrors.discordUsername = "Discord username is required";
-    } else if (
-      !/^(?!.*\.\.)([a-z0-9._]{2,32})$/.test(formData.discordUsername.trim())
-    ) {
-      newErrors.discordUsername =
-        "2-32 chars, lowercase letters, numbers, periods/underscores, no consecutive periods";
+      newErrors.discordUsername = ERROR_MESSAGES.FORM.REQUIRED_FIELD;
+    } else if (!FORM_VALIDATION.DISCORD.PATTERN.test(formData.discordUsername.trim())) {
+      newErrors.discordUsername = FORM_VALIDATION.DISCORD.ERROR_MESSAGE;
     }
 
     // IGN validation with helpful suggestions
     if (!formData.ign.trim()) {
-      newErrors.ign = "Your Minecraft username is required";
-    } else if (!/^[a-zA-Z0-9_]{3,16}$/.test(formData.ign.trim())) {
-      newErrors.ign =
-        "Minecraft usernames are 3-16 characters (letters, numbers, underscores only)";
+      newErrors.ign = ERROR_MESSAGES.FORM.REQUIRED_FIELD;
+    } else if (!FORM_VALIDATION.USERNAME.PATTERN.test(formData.ign.trim())) {
+      newErrors.ign = FORM_VALIDATION.USERNAME.ERROR_MESSAGE;
     }
 
     // Item description with smart suggestions
     if (!formData.itemDescription.trim()) {
       newErrors.itemDescription = "What should I deliver?";
-    } else if (formData.itemDescription.trim().length < 3) {
-      newErrors.itemDescription =
-        "Please be more specific (at least 3 characters)";
+    } else if (formData.itemDescription.trim().length < FORM_VALIDATION.ITEM_DESCRIPTION.MIN_LENGTH) {
+      newErrors.itemDescription = FORM_VALIDATION.ITEM_DESCRIPTION.ERROR_MESSAGE;
     }
 
     // Coordinate validation with format help
-    const coordPattern = /^-?\d+\s*,?\s*-?\d+\s*,?\s*-?\d+$/;
     if (!formData.pickupCoords.trim()) {
       newErrors.pickupCoords = "Where should I pick up the items?";
     } else if (
-      !coordPattern.test(formData.pickupCoords.replace(/[XYZxyz:\s]/g, ""))
+      !FORM_VALIDATION.COORDINATES.PATTERN.test(formData.pickupCoords.replace(/[XYZxyz:\s]/g, ""))
     ) {
-      newErrors.pickupCoords = "Format: X Y Z or X,Y,Z (e.g., 100 64 -200)";
+      newErrors.pickupCoords = FORM_VALIDATION.COORDINATES.ERROR_MESSAGE;
     }
 
     if (!formData.dropoffCoords.trim()) {
       newErrors.dropoffCoords = "Where should I deliver the items?";
     } else if (
-      !coordPattern.test(formData.dropoffCoords.replace(/[XYZxyz:\s]/g, ""))
+      !FORM_VALIDATION.COORDINATES.PATTERN.test(formData.dropoffCoords.replace(/[XYZxyz:\s]/g, ""))
     ) {
-      newErrors.dropoffCoords = "Format: X Y Z or X,Y,Z (e.g., 100 64 -200)";
+      newErrors.dropoffCoords = FORM_VALIDATION.COORDINATES.ERROR_MESSAGE;
     }
 
     // Payment validation with suggestions
     if (!formData.paymentOffer.trim()) {
       newErrors.paymentOffer = "How much are you offering?";
-    } else if (!/\d+/.test(formData.paymentOffer)) {
-      newErrors.paymentOffer = "Please include a number (e.g., '5 diamonds')";
+    } else if (!FORM_VALIDATION.PAYMENT_OFFER.PATTERN.test(formData.paymentOffer)) {
+      newErrors.paymentOffer = FORM_VALIDATION.PAYMENT_OFFER.ERROR_MESSAGE;
     }
 
     // Quantity validation
@@ -298,6 +246,7 @@ const JobForm: React.FC = () => {
                 setCurrentStep(1);
                 setFormKey((k) => k + 1);
                 localStorage.removeItem("jobForm_draft");
+                localStorage.removeItem(STORAGE_KEYS.FORM_DRAFT);
                 // Reset Formspree state by reloading the component
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}

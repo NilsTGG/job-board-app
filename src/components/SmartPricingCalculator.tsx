@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator, Diamond, AlertTriangle, Clock, Shield, Zap, MapPin, Skull } from 'lucide-react';
+import { PRICING, UI_CONFIG } from '../constants';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface PricingFactors {
   distance: number;
@@ -24,28 +26,25 @@ const SmartPricingCalculator: React.FC = () => {
   const [calculatedPrice, setCalculatedPrice] = useState(5);
   const [priceBreakdown, setPriceBreakdown] = useState<Array<{factor: string, cost: number, reason: string}>>([]);
 
+  // Debounce the factors to prevent excessive calculations
+  const debouncedFactors = useDebounce(factors, UI_CONFIG.DEBOUNCE_DELAY);
+
   const calculatePrice = () => {
-    let basePrice = 3; // Minimum delivery fee
+    let basePrice = PRICING.BASE_FEE;
     const breakdown: Array<{factor: string, cost: number, reason: string}> = [];
 
     // Distance calculation
-    const distanceCost = Math.max(0, Math.ceil(factors.distance / 100) * 2);
+    const distanceCost = Math.max(0, Math.ceil(debouncedFactors.distance / PRICING.CHUNKS_PER_DISTANCE_UNIT) * PRICING.DISTANCE_MULTIPLIER);
     if (distanceCost > 0) {
       breakdown.push({
         factor: 'Distance',
         cost: distanceCost,
-        reason: `${factors.distance} blocks = ${Math.ceil(factors.distance / 100)} chunks of boredom`
+        reason: `${debouncedFactors.distance} blocks = ${Math.ceil(debouncedFactors.distance / PRICING.CHUNKS_PER_DISTANCE_UNIT)} chunks of boredom`
       });
     }
 
     // Danger level multiplier
-    const dangerMultipliers = {
-      safe: { multiplier: 1, reason: 'Safe route (how boring)' },
-      risky: { multiplier: 1.5, reason: 'Some risk involved (mobs, cliffs, etc.)' },
-      dangerous: { multiplier: 2.5, reason: 'Nether/End/PvP zones (I might die)' },
-      suicidal: { multiplier: 4, reason: 'Are you trying to get me killed?' }
-    };
-    const dangerInfo = dangerMultipliers[factors.dangerLevel];
+    const dangerInfo = PRICING.DANGER_MULTIPLIERS[debouncedFactors.dangerLevel];
     if (dangerInfo.multiplier > 1) {
       const dangerCost = Math.ceil((basePrice + distanceCost) * (dangerInfo.multiplier - 1));
       breakdown.push({
@@ -56,21 +55,15 @@ const SmartPricingCalculator: React.FC = () => {
     }
 
     // Urgency surcharge
-    const urgencyFees = {
-      whenever: { fee: 0, reason: 'No rush (20% discount actually)' },
-      soon: { fee: 0, reason: 'Standard timing' },
-      urgent: { fee: 5, reason: 'Priority queue access' },
-      emergency: { fee: 15, reason: 'Drop everything mode activated' }
-    };
-    const urgencyInfo = urgencyFees[factors.urgency];
+    const urgencyInfo = PRICING.URGENCY_FEES[debouncedFactors.urgency];
     if (urgencyInfo.fee > 0) {
       breakdown.push({
         factor: 'Urgency Fee',
         cost: urgencyInfo.fee,
         reason: urgencyInfo.reason
       });
-    } else if (factors.urgency === 'whenever') {
-      const discount = Math.ceil((basePrice + distanceCost) * 0.2);
+    } else if (debouncedFactors.urgency === 'whenever') {
+      const discount = Math.ceil((basePrice + distanceCost) * PRICING.PATIENCE_DISCOUNT_RATE);
       breakdown.push({
         factor: 'Patience Discount',
         cost: -discount,
@@ -79,13 +72,7 @@ const SmartPricingCalculator: React.FC = () => {
     }
 
     // Item value insurance
-    const valueFees = {
-      cheap: { fee: 0, reason: 'Basic items (no insurance needed)' },
-      valuable: { fee: 2, reason: 'Valuable items (basic insurance)' },
-      precious: { fee: 5, reason: 'Precious cargo (premium insurance)' },
-      irreplaceable: { fee: 10, reason: 'Irreplaceable items (full coverage + therapy)' }
-    };
-    const valueInfo = valueFees[factors.itemValue];
+    const valueInfo = PRICING.VALUE_FEES[debouncedFactors.itemValue];
     if (valueInfo.fee > 0) {
       breakdown.push({
         factor: 'Insurance',
@@ -95,13 +82,7 @@ const SmartPricingCalculator: React.FC = () => {
     }
 
     // Time of day modifier
-    const timeFees = {
-      day: { fee: 0, reason: 'Normal hours' },
-      night: { fee: 1, reason: 'Night shift (mobs are annoying)' },
-      peak: { fee: 3, reason: 'Peak hours (everyone wants stuff)' },
-      dead: { fee: -1, reason: 'Dead hours (nothing else to do)' }
-    };
-    const timeInfo = timeFees[factors.timeOfDay];
+    const timeInfo = PRICING.TIME_FEES[debouncedFactors.timeOfDay];
     if (timeInfo.fee !== 0) {
       breakdown.push({
         factor: 'Time Modifier',
@@ -111,13 +92,7 @@ const SmartPricingCalculator: React.FC = () => {
     }
 
     // Weather conditions
-    const weatherFees = {
-      clear: { fee: 0, reason: 'Perfect weather' },
-      rain: { fee: 1, reason: 'Rain (visibility issues)' },
-      storm: { fee: 3, reason: 'Thunderstorm (lightning risk)' },
-      apocalypse: { fee: 10, reason: 'Apocalyptic conditions (why now?)' }
-    };
-    const weatherInfo = weatherFees[factors.weather];
+    const weatherInfo = PRICING.WEATHER_FEES[debouncedFactors.weather];
     if (weatherInfo.fee > 0) {
       breakdown.push({
         factor: 'Weather Tax',
@@ -127,10 +102,10 @@ const SmartPricingCalculator: React.FC = () => {
     }
 
     // Calculate total
-    const totalCost = Math.max(1, basePrice + breakdown.reduce((sum, item) => sum + item.cost, 0));
+    const totalCost = Math.max(PRICING.MINIMUM_PRICE, basePrice + breakdown.reduce((sum, item) => sum + item.cost, 0));
     
     // Apply danger multiplier to final price
-    const finalPrice = Math.ceil(totalCost * dangerMultipliers[factors.dangerLevel].multiplier);
+    const finalPrice = Math.ceil(totalCost * PRICING.DANGER_MULTIPLIERS[debouncedFactors.dangerLevel].multiplier);
     
     setCalculatedPrice(finalPrice);
     setPriceBreakdown([
@@ -141,7 +116,7 @@ const SmartPricingCalculator: React.FC = () => {
 
   useEffect(() => {
     calculatePrice();
-  }, [factors]);
+  }, [debouncedFactors]);
 
   const getDangerIcon = (level: string) => {
     switch (level) {
