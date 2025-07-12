@@ -9,6 +9,7 @@ import JobForm from './components/JobForm';
 import CourierProfile from './components/CourierProfile';
 import BrokePeopleMenu from './components/BrokePeopleMenu';
 import FAQ from './components/FAQ';
+import SmartPricingCalculator from './components/SmartPricingCalculator';
 import Footer from './components/Footer';
 import { useKonamiCode } from './hooks/useKonamiCode';
 import ProgressiveEnhancement from './components/ProgressiveEnhancement';
@@ -77,6 +78,7 @@ function App() {
           <Services />
           <Stats />
           <Pricing />
+          <SmartPricingCalculator />
           <Testimonials />
           <JobForm />
           <BrokePeopleMenu />
