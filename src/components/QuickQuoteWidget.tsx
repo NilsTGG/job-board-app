@@ -82,6 +82,17 @@ const QuickQuoteWidget: React.FC = () => {
     }
   };
 
+  // Handle Enter key to trigger quote calculation or form submission
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (quote) {
+        scrollToForm();
+      }
+      // If no quote yet, Enter just triggers normal input behavior
+    }
+  };
+
   // Auto-format coordinates as user types
   const handleCoordChange = (value: string, setter: (value: string) => void) => {
     // Auto-format common coordinate patterns
@@ -108,6 +119,7 @@ const QuickQuoteWidget: React.FC = () => {
               type="text"
               value={pickupCoords}
               onChange={(e) => handleCoordChange(e.target.value, setPickupCoords)}
+              onKeyDown={handleKeyDown}
               placeholder="100, 64, -200"
               className="w-full pl-10 pr-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
@@ -125,6 +137,7 @@ const QuickQuoteWidget: React.FC = () => {
               type="text"
               value={deliveryCoords}
               onChange={(e) => handleCoordChange(e.target.value, setDeliveryCoords)}
+              onKeyDown={handleKeyDown}
               placeholder="300, 64, 150"
               className="w-full pl-10 pr-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             />

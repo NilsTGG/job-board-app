@@ -24,6 +24,29 @@ const ConversationalForm: React.FC = () => {
   });
   const [state, handleSubmit] = useForm('xqabvypp');
 
+  // Handle Enter key navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      
+      if (currentStep === steps.length - 1) {
+        // Last step - submit form if valid
+        if (canProceed()) {
+          const form = e.currentTarget.closest('form');
+          if (form) {
+            const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+            form.dispatchEvent(submitEvent);
+          }
+        }
+      } else {
+        // Other steps - go to next step if valid
+        if (canProceed()) {
+          nextStep();
+        }
+      }
+    }
+  };
+
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -42,6 +65,7 @@ const ConversationalForm: React.FC = () => {
               type="text"
               value={formData.discordUsername}
               onChange={(e) => updateFormData('discordUsername', e.target.value.toLowerCase())}
+              onKeyDown={handleKeyDown}
               placeholder="yourname (lowercase, no @)"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
             />
@@ -54,6 +78,7 @@ const ConversationalForm: React.FC = () => {
               type="text"
               value={formData.ign}
               onChange={(e) => updateFormData('ign', e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="YourMinecraftName"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
             />
@@ -74,6 +99,12 @@ const ConversationalForm: React.FC = () => {
             <textarea
               value={formData.itemDescription}
               onChange={(e) => updateFormData('itemDescription', e.target.value)}
+              onKeyDown={(e) => {
+                // Allow Shift+Enter for new lines in textarea
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  handleKeyDown(e);
+                }
+              }}
               placeholder="e.g., '64 oak logs from my tree farm' or 'buy me a diamond pickaxe from spawn shops'"
               rows={4}
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 text-lg resize-none"
@@ -105,6 +136,7 @@ const ConversationalForm: React.FC = () => {
               type="text"
               value={formData.pickupCoords}
               onChange={(e) => updateFormData('pickupCoords', e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="100, 64, -200"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg"
             />
@@ -117,6 +149,7 @@ const ConversationalForm: React.FC = () => {
               type="text"
               value={formData.dropoffCoords}
               onChange={(e) => updateFormData('dropoffCoords', e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="300, 64, 150"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg"
             />
@@ -147,6 +180,7 @@ const ConversationalForm: React.FC = () => {
               type="text"
               value={formData.paymentOffer}
               onChange={(e) => updateFormData('paymentOffer', e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="e.g., 10 diamonds, 15 diamonds"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-lg"
             />
@@ -183,6 +217,12 @@ const ConversationalForm: React.FC = () => {
             <textarea
               value={formData.notes}
               onChange={(e) => updateFormData('notes', e.target.value)}
+              onKeyDown={(e) => {
+                // Allow Shift+Enter for new lines in textarea
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  handleKeyDown(e);
+                }
+              }}
               placeholder="Special instructions, dangers, or just vent about your day..."
               rows={3}
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"

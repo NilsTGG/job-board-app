@@ -127,6 +127,15 @@ const ProgressiveHero: React.FC = () => {
                     <input
                       type="text"
                       placeholder="100, 64, -200"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const nextInput = e.currentTarget.parentElement?.parentElement?.nextElementSibling?.querySelector('input');
+                          if (nextInput) {
+                            (nextInput as HTMLInputElement).focus();
+                          }
+                        }
+                      }}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -135,6 +144,16 @@ const ProgressiveHero: React.FC = () => {
                     <input
                       type="text"
                       placeholder="300, 64, 150"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const button = e.currentTarget.parentElement?.parentElement?.parentElement?.querySelector('button');
+                          if (button) {
+                            button.click();
+                          }
+                        }
+                      }}
+                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
