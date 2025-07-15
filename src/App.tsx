@@ -5,15 +5,21 @@ import Hero from './components/Hero';
 import Services from './components/Services';
 import Stats from './components/Stats';
 import Pricing from './components/Pricing';
-import Testimonials from './components/Testimonials';
-import JobForm from './components/JobForm';
-import CourierProfile from './components/CourierProfile';
-import BrokePeopleMenu from './components/BrokePeopleMenu';
-import FAQ from './components/FAQ';
-import SmartPricingCalculator from './components/SmartPricingCalculator';
 import Footer from './components/Footer';
 import { useKonamiCode } from './hooks/useKonamiCode';
 import ProgressiveEnhancement from './components/ProgressiveEnhancement';
+import { 
+  LazyJobForm,
+  LazySmartPricingCalculator,
+  LazyTestimonials,
+  LazyFAQ,
+  LazyBrokePeopleMenu,
+  LazyCourierProfile,
+  SuspenseJobForm,
+  SuspenseCalculator,
+  SuspenseSection,
+  SuspenseGeneric
+} from './components/LazyComponents';
 
 // Memoized components for better performance
 const MemoizedHeader = React.memo(Header);
@@ -21,12 +27,6 @@ const MemoizedHero = React.memo(Hero);
 const MemoizedServices = React.memo(Services);
 const MemoizedStats = React.memo(Stats);
 const MemoizedPricing = React.memo(Pricing);
-const MemoizedSmartPricingCalculator = React.memo(SmartPricingCalculator);
-const MemoizedTestimonials = React.memo(Testimonials);
-const MemoizedJobForm = React.memo(JobForm);
-const MemoizedBrokePeopleMenu = React.memo(BrokePeopleMenu);
-const MemoizedCourierProfile = React.memo(CourierProfile);
-const MemoizedFAQ = React.memo(FAQ);
 const MemoizedFooter = React.memo(Footer);
 
 function App() {
@@ -110,27 +110,39 @@ function App() {
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Pricing calculator temporarily unavailable</div>}>
-              <MemoizedSmartPricingCalculator />
+              <SuspenseCalculator>
+                <LazySmartPricingCalculator />
+              </SuspenseCalculator>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Testimonials section temporarily unavailable</div>}>
-              <MemoizedTestimonials />
+              <SuspenseSection>
+                <LazyTestimonials />
+              </SuspenseSection>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Job form temporarily unavailable. Please contact us directly on Discord.</div>}>
-              <MemoizedJobForm />
+              <SuspenseJobForm>
+                <LazyJobForm />
+              </SuspenseJobForm>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Budget menu temporarily unavailable</div>}>
-              <MemoizedBrokePeopleMenu />
+              <SuspenseGeneric text="Loading budget options...">
+                <LazyBrokePeopleMenu />
+              </SuspenseGeneric>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Courier profile temporarily unavailable</div>}>
-              <MemoizedCourierProfile />
+              <SuspenseSection>
+                <LazyCourierProfile />
+              </SuspenseSection>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">FAQ section temporarily unavailable</div>}>
-              <MemoizedFAQ />
+              <SuspenseGeneric text="Loading FAQ...">
+                <LazyFAQ />
+              </SuspenseGeneric>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Footer temporarily unavailable</div>}>
