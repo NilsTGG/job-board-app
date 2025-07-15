@@ -171,6 +171,94 @@ const ModularServices: React.FC = () => {
           </div>
         </div>
       )
+    },
+    {
+      icon: <Users className="h-6 w-6 text-cyan-400" />,
+      title: "Debt Collection",
+      subtitle: "Professional awkward conversation handler",
+      preview: "5-15 diamonds + 20% of debt",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-300">
+            Someone owes you items but won't deliver? I'll handle the awkward conversation and collection for you.
+          </p>
+          <div className="bg-cyan-900/20 rounded-lg p-4">
+            <h4 className="text-cyan-400 font-medium mb-2">What I Collect:</h4>
+            <ul className="text-cyan-200 text-sm space-y-1">
+              <li>• Unpaid trades and IOUs</li>
+              <li>• Borrowed items never returned</li>
+              <li>• Competition prizes owed</li>
+              <li>• Professional intimidation included</li>
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    {
+      icon: <Package className="h-6 w-6 text-emerald-400" />,
+      title: "Bulk Shopping Runs",
+      subtitle: "Your personal shopping slave",
+      preview: "Item cost + 10-25 diamonds",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-300">
+            Give me a shopping list and diamonds. I'll hit every shop, compare prices, and deliver everything in one trip.
+          </p>
+          <div className="bg-emerald-900/20 rounded-lg p-4">
+            <h4 className="text-emerald-400 font-medium mb-2">Shopping Services:</h4>
+            <ul className="text-emerald-200 text-sm space-y-1">
+              <li>• Multi-shop coordination</li>
+              <li>• Price comparison included</li>
+              <li>• Bulk discount negotiations</li>
+              <li>• Single delivery of everything</li>
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    {
+      icon: <Zap className="h-6 w-6 text-amber-400" />,
+      title: "Emergency Supply Drops",
+      subtitle: "Rescue service for the helpless",
+      preview: "20-75 diamonds + premium surcharge",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-300">
+            Stuck in a cave? Out of food? Lost and dying? Text your location and I'll come save you.
+          </p>
+          <div className="bg-amber-900/20 rounded-lg p-4">
+            <h4 className="text-amber-400 font-medium mb-2">Emergency Situations:</h4>
+            <ul className="text-amber-200 text-sm space-y-1">
+              <li>• Food delivery to prevent starvation</li>
+              <li>• Tools when you're stuck mining</li>
+              <li>• Torches for cave exploration</li>
+              <li>• "I'm dying" premium pricing applies</li>
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    {
+      icon: <Users className="h-6 w-6 text-violet-400" />,
+      title: "Proxy Shopping",
+      subtitle: "Social anxiety delivery service",
+      preview: "Item cost + 5-12 diamonds",
+      content: (
+        <div className="space-y-4">
+          <p className="text-gray-300">
+            Too awkward to negotiate with sellers? I'll handle the social interaction and deliver your items.
+          </p>
+          <div className="bg-violet-900/20 rounded-lg p-4">
+            <h4 className="text-violet-400 font-medium mb-2">Social Services:</h4>
+            <ul className="text-violet-200 text-sm space-y-1">
+              <li>• Handle seller negotiations</li>
+              <li>• Deal with difficult shop owners</li>
+              <li>• Avoid awkward small talk</li>
+              <li>• Professional social buffer</li>
+            </ul>
+          </div>
+        </div>
+      )
     }
   ];
 
