@@ -1,33 +1,55 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { splitVendorChunkPlugin } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/job-board-app/",
   plugins: [
     react(),
-    splitVendorChunkPlugin()
+    // Removed splitVendorChunkPlugin() - we're using manual chunks instead
   ],
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Separate vendor chunks for better caching
-          'react-vendor': ['react', 'react-dom'],
-          'form-vendor': ['@formspree/react'],
-          'icons-vendor': ['lucide-react'],
-          // Separate heavy components
-          'form-components': [
-            './src/components/JobForm.tsx',
-            './src/components/AccessibleSelect.tsx',
-            './src/components/CoordinateInput.tsx'
-          ],
-          'calculator-components': [
-            './src/components/UnifiedQuoteWidget.tsx',
-            './src/utils/pricingCalculator.ts',
-            './src/utils/distanceCalculator.ts'
-          ]
+        // Using function form for manual chunks (more flexible)
+        manualChunks: (id) => {
+          // Vendor chunks
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@formspree/react')) {
+              return 'form-vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'icons-vendor';
+            }
+            if (id.includes('zustand')) {
+              return 'state-vendor';
+            }
+            // All other node_modules go to vendor chunk
+            return 'vendor';
+          }
+          
+          // Component chunks
+          if (id.includes('/components/ConversationalForm') || 
+              id.includes('/components/AccessibleSelect') || 
+              id.includes('/components/CoordinateInput')) {
+            return 'form-components';
+          }
+          
+          if (id.includes('/components/UnifiedQuoteWidget') || 
+              id.includes('/utils/pricingCalculator') || 
+              id.includes('/utils/distanceCalculator')) {
+            return 'calculator-components';
+          }
+          
+          if (id.includes('/services/')) {
+            return 'services';
+          }
+          
+          // Default chunk
+          return undefined;
         }
       }
     },
