@@ -24,7 +24,7 @@ export default defineConfig({
             './src/components/CoordinateInput.tsx'
           ],
           'calculator-components': [
-            './src/components/SmartPricingCalculator.tsx',
+            './src/components/UnifiedQuoteWidget.tsx',
             './src/utils/pricingCalculator.ts',
             './src/utils/distanceCalculator.ts'
           ]

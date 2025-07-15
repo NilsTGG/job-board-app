@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 
 // Lazy load heavy components
 export const LazyJobForm = lazy(() => import('./ConversationalForm'));
-export const LazySmartPricingCalculator = lazy(() => import('./SmartPricingCalculator'));
+export const LazySmartPricingCalculator = lazy(() => import('./UnifiedQuoteWidget'));
 export const LazyTestimonials = lazy(() => import('./Testimonials'));
 export const LazyFAQ = lazy(() => import('./FAQ'));
 export const LazyBrokePeopleMenu = lazy(() => import('./BrokePeopleMenu'));
