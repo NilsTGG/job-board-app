@@ -278,16 +278,17 @@ function App() {
               <li>• Text me your coords + what you need</li>
               <li>• Keep building while I handle logistics</li>
               <li>• Perfect for active builders</li>
-              <li>• 3-8 diamonds + item costs</li>
+              <li>• I bring stuff, you keep building</li>
             </ul>
           </div>
           
           <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
             <h3 className="text-lg font-semibold text-white mb-2">🚚 Base Moving</h3>
-            <p className="text-gray-300 text-sm mb-3">Relocate your entire storage system</p>
+            <p className="text-gray-300 text-sm mb-3">Move your stuff from old base to new base</p>
             <ul className="text-gray-400 text-sm space-y-1">
-              <li>• Pack and organize everything</li>
-              <li>• Set up storage at new location</li>
+              <li>• Pack everything into shulkers</li>
+              <li>• Transport to new location</li>
+              <li>• Dump it all there (you organize)</li>
               <li>• 50-200 diamonds depending on size</li>
             </ul>
           </div>
