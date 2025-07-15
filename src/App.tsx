@@ -231,8 +231,7 @@ function App() {
               </h3>
               <div className="space-y-2 text-sm text-gray-300">
                 <div><strong>Discord:</strong> NilsTG</div>
-                <div><strong>Server:</strong> [Your Server Name]</div>
-                <div><strong>Response time:</strong> ~30 minutes</div>
+                <div><strong>Response time:</strong> When I'm online</div>
                 <div><strong>Payment:</strong> Diamonds only</div>
               </div>
             </div>
