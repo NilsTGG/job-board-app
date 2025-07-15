@@ -232,6 +232,55 @@ function App() {
         </div>
       </div>
 
+      {/* Services Section */}
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4">What I Do</h2>
+          <p className="text-gray-400">Simple delivery services for lazy players</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">📦 Item Delivery</h3>
+            <p className="text-gray-300 text-sm mb-3">Move your stuff from point A to point B</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Any items, any distance</li>
+              <li>• I take the risk, you don't</li>
+              <li>• 5-15 diamonds depending on distance</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">🛒 Shopping Service</h3>
+            <p className="text-gray-300 text-sm mb-3">Buy items from shops for you</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Visit multiple shops</li>
+              <li>• Compare prices</li>
+              <li>• Item cost + 5-7 diamonds</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">🚚 Base Moving</h3>
+            <p className="text-gray-300 text-sm mb-3">Relocate your entire storage system</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Pack and organize everything</li>
+              <li>• Set up storage at new location</li>
+              <li>• 50-200 diamonds depending on size</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">🆘 Emergency Rescue</h3>
+            <p className="text-gray-300 text-sm mb-3">When you're stuck and need help</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Emergency supply runs</li>
+              <li>• Finish abandoned jobs</li>
+              <li>• 20-75 diamonds depending on urgency</li>
+            </ul>
+          </div>
+        </div>
+      </div>
       {/* Footer */}
       <footer className="bg-gray-800 border-t border-gray-700 py-6 mt-12">
         <div className="max-w-4xl mx-auto px-4 text-center text-gray-400 text-sm">
@@ -243,4 +292,65 @@ function App() {
   );
 }
 
+      {/* Broke People Menu */}
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3 rounded-lg">
+            <span className="text-2xl">🪙</span>
+            <h2 className="text-xl font-bold text-white">Broke People Menu™</h2>
+          </div>
+          <p className="text-gray-400 mt-4 italic">
+            "Because even cheapskates deserve service. Just not fast service."
+          </p>
+        </div>
+        
+        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+          <div className="bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3">
+            <h3 className="text-white font-bold">Budget Services</h3>
+          </div>
+          
+          <div className="p-6 space-y-4">
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Basic Delivery (within 300 blocks)</div>
+                <div className="text-gray-400 text-sm">Includes sarcasm at no extra cost</div>
+              </div>
+              <div className="text-yellow-400 font-bold">3 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Multi-Shop Delivery</div>
+                <div className="text-gray-400 text-sm">Because you couldn't walk to two places</div>
+              </div>
+              <div className="text-yellow-400 font-bold">5 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Item Relocation (within your base)</div>
+                <div className="text-gray-400 text-sm">Literally carrying something 10 blocks</div>
+              </div>
+              <div className="text-yellow-400 font-bold">2 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2">
+              <div>
+                <div className="text-white font-medium">Low Priority Queue Slot</div>
+                <div className="text-gray-400 text-sm">I'll get to it. Eventually. Maybe.</div>
+              </div>
+              <div className="text-yellow-400 font-bold">1 diamond</div>
+            </div>
+          </div>
+          
+          <div className="bg-yellow-900/20 border-t border-yellow-700/30 px-6 py-4">
+            <div className="text-yellow-400 text-sm font-medium mb-2">⚠️ Broke People Menu™ Terms:</div>
+            <ul className="text-yellow-200 text-xs space-y-1">
+              <li>• "Budget" doesn't mean "fast" or "with a smile"</li>
+              <li>• Payment due upfront. No credit for broke people.</li>
+              <li>• Attitude adjustment not included in any package</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 export default App;
