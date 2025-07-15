@@ -243,6 +243,97 @@ function App() {
         </div>
       </div>
 
+      {/* Broke People Menu */}
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3 rounded-lg">
+            <span className="text-2xl">🪙</span>
+            <h2 className="text-xl font-bold text-white">Broke People Menu™</h2>
+          </div>
+          <p className="text-gray-400 mt-4 italic">
+            "Because even cheapskates deserve service. Just not fast service."
+          </p>
+        </div>
+        
+        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+          <div className="bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3">
+            <h3 className="text-white font-bold">Budget Services</h3>
+          </div>
+          
+          <div className="p-6 space-y-4">
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Basic Delivery (within 300 blocks)</div>
+                <div className="text-gray-400 text-sm">Includes sarcasm at no extra cost</div>
+              </div>
+              <div className="text-yellow-400 font-bold">3 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Multi-Shop Delivery</div>
+                <div className="text-gray-400 text-sm">Because you couldn't walk to two places</div>
+              </div>
+              <div className="text-yellow-400 font-bold">5 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Item Relocation (within your base)</div>
+                <div className="text-gray-400 text-sm">Literally carrying something 10 blocks</div>
+              </div>
+              <div className="text-yellow-400 font-bold">2 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Newbie Shopping Assistant</div>
+                <div className="text-gray-400 text-sm">I'll teach you where shops are (once)</div>
+              </div>
+              <div className="text-yellow-400 font-bold">4 diamonds</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2 border-b border-gray-700">
+              <div>
+                <div className="text-white font-medium">Coordinate Navigation Help</div>
+                <div className="text-gray-400 text-sm">Because you can't read F3 screen</div>
+              </div>
+              <div className="text-yellow-400 font-bold">1 diamond</div>
+            </div>
+            
+            <div className="flex justify-between items-center py-2">
+              <div>
+                <div className="text-white font-medium">Low Priority Queue Slot</div>
+                <div className="text-gray-400 text-sm">I'll get to it. Eventually. Maybe.</div>
+              </div>
+              <div className="text-yellow-400 font-bold">1 diamond</div>
+            </div>
+          </div>
+          
+          <div className="bg-yellow-900/20 border-t border-yellow-700/30 px-6 py-4">
+            <div className="text-yellow-400 text-sm font-medium mb-2">⚠️ Broke People Menu™ Terms:</div>
+            <ul className="text-yellow-200 text-xs space-y-1">
+              <li>• "Budget" doesn't mean "fast" or "with a smile"</li>
+              <li>• Payment due upfront. No credit for broke people.</li>
+              <li>• Attitude adjustment not included in any package</li>
+              <li>• New players get one free "how to find shops" tutorial</li>
+              <li>• All services subject to my mood and diamond reserves</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="mt-6 bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+          <h4 className="text-white font-medium mb-2 flex items-center gap-2">
+            <span className="text-green-400">💡</span>
+            New Player Special
+          </h4>
+          <p className="text-gray-300 text-sm">
+            First-time customers get a free "Server Tour" where I show you important locations. 
+            After that, you're on your own like everyone else.
+          </p>
+        </div>
+      </div>
+
       {/* Services Section */}
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
