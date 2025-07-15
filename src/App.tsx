@@ -255,62 +255,132 @@ function App() {
           </p>
         </div>
         
-        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-          <div className="bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3">
-            <h3 className="text-white font-bold">Budget Services</h3>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            {
+              title: "Basic Delivery",
+              subtitle: "(within 300 blocks)",
+              price: "3 diamonds",
+              description: "Includes sarcasm at no extra cost",
+              details: [
+                "• Simple point A to point B delivery",
+                "• Maximum 300 block distance",
+                "• Standard attitude included",
+                "• No rush service at this price"
+              ]
+            },
+            {
+              title: "Multi-Shop Delivery",
+              subtitle: "",
+              price: "5 diamonds",
+              description: "Because you couldn't walk to two places",
+              details: [
+                "• Visit up to 3 different shops",
+                "• Coordinate multiple pickups",
+                "• Single delivery to your location",
+                "• Price comparison not included"
+              ]
+            },
+            {
+              title: "Item Relocation",
+              subtitle: "(within your base)",
+              price: "2 diamonds",
+              description: "Literally carrying something 10 blocks",
+              details: [
+                "• Move items within your base area",
+                "• Maximum 50 block distance",
+                "• Perfect for lazy builders",
+                "• Judgment included for free"
+              ]
+            },
+            {
+              title: "Newbie Shopping Assistant",
+              subtitle: "",
+              price: "4 diamonds",
+              description: "I'll teach you where shops are (once)",
+              details: [
+                "• Personal shopping tour",
+                "• Show you important shop locations",
+                "• Explain how to use shops",
+                "• One-time service only"
+              ]
+            },
+            {
+              title: "Coordinate Navigation Help",
+              subtitle: "",
+              price: "1 diamond",
+              description: "Because you can't read F3 screen",
+              details: [
+                "• Help you understand coordinates",
+                "• Guide you to specific locations",
+                "• Basic navigation tutorial",
+                "• Patience not guaranteed"
+              ]
+            },
+            {
+              title: "Low Priority Queue Slot",
+              subtitle: "",
+              price: "1 diamond",
+              description: "I'll get to it. Eventually. Maybe.",
+              details: [
+                "• Your job goes to the bottom of the list",
+                "• No time guarantees whatsoever",
+                "• Perfect for non-urgent requests",
+                "• Cheapest option available"
+              ]
+            }
+          ].map((service, index) => {
+            const [isExpanded, setIsExpanded] = React.useState(false);
+            
+            return (
+              <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 shadow-xl hover:border-yellow-500/50 transition-all duration-300">
+                <div 
+                  className="p-6 cursor-pointer"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <span className="text-yellow-400">🪙</span>
+                        {service.title}
+                        {service.subtitle && <span className="text-sm text-gray-400">{service.subtitle}</span>}
+                      </h3>
+                      <p className="text-gray-400 text-sm mt-1">{service.description}</p>
+                    </div>
+                    <div className="text-yellow-400 font-bold text-right">
+                      <div>{service.price}</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        {isExpanded ? '▼' : '▶'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {isExpanded && (
+                  <div className="px-6 pb-6 border-t border-gray-700/50">
+                    <div className="pt-4 space-y-2">
+                      {service.details.map((detail, detailIndex) => (
+                        <p key={detailIndex} className="text-gray-300 text-sm">{detail}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        <div className="mt-8 bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+          <h4 className="text-white font-medium mb-2 flex items-center gap-2">
+            <span className="text-green-400">💡</span>
+            New Player Special
+          </h4>
+          <p className="text-gray-300 text-sm">
+            First-time customers get a free "Server Tour" where I show you important locations. 
+            After that, you're on your own like everyone else.
+          </p>
           
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Basic Delivery (within 300 blocks)</div>
-                <div className="text-gray-400 text-sm">Includes sarcasm at no extra cost</div>
-              </div>
-              <div className="text-yellow-400 font-bold">3 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Multi-Shop Delivery</div>
-                <div className="text-gray-400 text-sm">Because you couldn't walk to two places</div>
-              </div>
-              <div className="text-yellow-400 font-bold">5 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Item Relocation (within your base)</div>
-                <div className="text-gray-400 text-sm">Literally carrying something 10 blocks</div>
-              </div>
-              <div className="text-yellow-400 font-bold">2 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Newbie Shopping Assistant</div>
-                <div className="text-gray-400 text-sm">I'll teach you where shops are (once)</div>
-              </div>
-              <div className="text-yellow-400 font-bold">4 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Coordinate Navigation Help</div>
-                <div className="text-gray-400 text-sm">Because you can't read F3 screen</div>
-              </div>
-              <div className="text-yellow-400 font-bold">1 diamond</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2">
-              <div>
-                <div className="text-white font-medium">Low Priority Queue Slot</div>
-                <div className="text-gray-400 text-sm">I'll get to it. Eventually. Maybe.</div>
-              </div>
-              <div className="text-yellow-400 font-bold">1 diamond</div>
-            </div>
-          </div>
-          
-          <div className="bg-yellow-900/20 border-t border-yellow-700/30 px-6 py-4">
+          <div className="mt-4 bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-4">
             <div className="text-yellow-400 text-sm font-medium mb-2">⚠️ Broke People Menu™ Terms:</div>
             <ul className="text-yellow-200 text-xs space-y-1">
               <li>• "Budget" doesn't mean "fast" or "with a smile"</li>
@@ -320,17 +390,6 @@ function App() {
               <li>• All services subject to my mood and diamond reserves</li>
             </ul>
           </div>
-        </div>
-        
-        <div className="mt-6 bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-          <h4 className="text-white font-medium mb-2 flex items-center gap-2">
-            <span className="text-green-400">💡</span>
-            New Player Special
-          </h4>
-          <p className="text-gray-300 text-sm">
-            First-time customers get a free "Server Tour" where I show you important locations. 
-            After that, you're on your own like everyone else.
-          </p>
         </div>
       </div>
 
