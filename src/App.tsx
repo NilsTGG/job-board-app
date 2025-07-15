@@ -28,23 +28,33 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 text-white">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <Package className="h-10 w-10 text-blue-400" />
+            <div className="relative">
+              <Package className="h-12 w-12 text-blue-400 animate-pulse" />
+              <div className="absolute inset-0 bg-blue-400 rounded-full blur-xl opacity-20 animate-pulse"></div>
+            </div>
             <h1 className="text-3xl font-bold">Because You Won't™</h1>
           </div>
           <p className="text-xl text-gray-400">Minecraft Delivery Service</p>
-          <p className="text-gray-500 mt-2">Payment in diamonds only • Response time: When I'm online</p>
+          <div className="flex justify-center items-center gap-4 mt-4 text-sm text-gray-400">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span>Online Now</span>
+            </div>
+            <div>•</div>
+            <div>Payment in diamonds only</div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main Form */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 border border-gray-700/50 shadow-2xl hover:border-blue-500/50 transition-all duration-300">
               <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                 <MessageCircle className="h-6 w-6 text-blue-400" />
                 Submit Delivery Job
@@ -59,7 +69,7 @@ function App() {
                       name="discordUsername"
                       placeholder="yourname"
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700"
                     />
                   </div>
                   
@@ -70,7 +80,7 @@ function App() {
                       name="ign"
                       placeholder="YourMinecraftName"
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700"
                     />
                   </div>
                 </div>
@@ -82,7 +92,7 @@ function App() {
                     placeholder="e.g., 64 oak logs, diamond pickaxe, etc."
                     required
                     rows={3}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700 resize-none"
                   />
                 </div>
 
@@ -94,7 +104,7 @@ function App() {
                       name="pickupCoords"
                       placeholder="100, 64, -200"
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700"
                     />
                   </div>
                   
@@ -105,7 +115,7 @@ function App() {
                       name="dropoffCoords"
                       placeholder="300, 64, 150"
                       required
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700"
                     />
                   </div>
                 </div>
@@ -117,7 +127,7 @@ function App() {
                     name="paymentOffer"
                     placeholder="5 diamonds"
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700"
                   />
                 </div>
 
@@ -125,7 +135,7 @@ function App() {
                   <label className="block text-white font-medium mb-2">Urgency</label>
                   <select
                     name="urgency"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700"
                   >
                     <option value="whenever">Whenever (20% discount)</option>
                     <option value="soon">Soon-ish (standard rate)</option>
@@ -140,14 +150,14 @@ function App() {
                     name="notes"
                     placeholder="Any special instructions..."
                     rows={2}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={state.submitting}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg"
                 >
                   {state.submitting ? 'Submitting...' : 'Submit Job'}
                 </button>
@@ -165,7 +175,7 @@ function App() {
           {/* Sidebar Info */}
           <div className="space-y-6">
             {/* Pricing */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-xl hover:border-yellow-500/50 transition-all duration-300">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <Diamond className="h-5 w-5 text-yellow-400" />
                 Pricing
@@ -191,33 +201,33 @@ function App() {
             </div>
 
             {/* How It Works */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-xl hover:border-green-500/50 transition-all duration-300">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <Clock className="h-5 w-5 text-green-400" />
                 How It Works
               </h3>
               <div className="space-y-3 text-sm text-gray-300">
                 <div className="flex items-start gap-2">
-                  <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">1</span>
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5 shadow-lg">1</span>
                   <span>Submit your delivery request</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">2</span>
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5 shadow-lg">2</span>
                   <span>I'll contact you on Discord</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">3</span>
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5 shadow-lg">3</span>
                   <span>Meet at pickup location</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold mt-0.5">4</span>
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mt-0.5 shadow-lg">4</span>
                   <span>Pay diamonds, I deliver</span>
                 </div>
               </div>
             </div>
 
             {/* Contact */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-xl hover:border-purple-500/50 transition-all duration-300">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-purple-400" />
                 Contact
@@ -282,7 +292,7 @@ function App() {
         </div>
       </div>
       {/* Footer */}
-      <footer className="bg-gray-800 border-t border-gray-700 py-6 mt-12">
+      <footer className="bg-gray-900/80 backdrop-blur-sm border-t border-gray-700/50 py-8 mt-16">
         <div className="max-w-4xl mx-auto px-4 text-center text-gray-400 text-sm">
           <p>Because You Won't™ - Professional Minecraft delivery service</p>
           <p className="mt-1">Payment due on pickup • All dimensions covered • Professional service guaranteed</p>
