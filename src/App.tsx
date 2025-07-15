@@ -1,10 +1,11 @@
 import React from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Services from './components/Services';
+import ProgressiveHero from './components/ProgressiveHero';
+import StickyNavigation from './components/StickyNavigation';
+import ModularServices from './components/ModularServices';
 import Stats from './components/Stats';
 import Pricing from './components/Pricing';
+import ConversationalForm from './components/ConversationalForm';
 import Footer from './components/Footer';
 import { useKonamiCode } from './hooks/useKonamiCode';
 import ProgressiveEnhancement from './components/ProgressiveEnhancement';
@@ -22,11 +23,11 @@ import {
 } from './components/LazyComponents';
 
 // Memoized components for better performance
-const MemoizedHeader = React.memo(Header);
-const MemoizedHero = React.memo(Hero);
-const MemoizedServices = React.memo(Services);
+const MemoizedProgressiveHero = React.memo(ProgressiveHero);
+const MemoizedModularServices = React.memo(ModularServices);
 const MemoizedStats = React.memo(Stats);
 const MemoizedPricing = React.memo(Pricing);
+const MemoizedConversationalForm = React.memo(ConversationalForm);
 const MemoizedFooter = React.memo(Footer);
 
 function App() {
@@ -89,16 +90,15 @@ function App() {
       <ErrorBoundary>
         <div className={`min-h-screen bg-gray-900 text-white ${isActivated ? 'animate-pulse' : ''}`}>
           <div className={isActivated ? 'bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 bg-[length:400%_400%] animate-gradient' : ''}>
-            <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Navigation temporarily unavailable</div>}>
-              <MemoizedHeader />
-            </ErrorBoundary>
+            {/* Sticky Navigation */}
+            <StickyNavigation />
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Hero section temporarily unavailable</div>}>
-              <MemoizedHero />
+              <MemoizedProgressiveHero />
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Services section temporarily unavailable</div>}>
-              <MemoizedServices />
+              <MemoizedModularServices />
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Stats section temporarily unavailable</div>}>
@@ -121,10 +121,20 @@ function App() {
               </SuspenseSection>
             </ErrorBoundary>
             
-            <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Job form temporarily unavailable. Please contact us directly on Discord.</div>}>
-              <SuspenseJobForm>
-                <LazyJobForm />
-              </SuspenseJobForm>
+            <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Job form temporarily unavailable</div>}>
+              <section id="submit-job" className="py-20 bg-gray-900">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                      Submit Your Job
+                    </h2>
+                    <p className="text-xl text-gray-400">
+                      Let's get your stuff moved (so you don't have to)
+                    </p>
+                  </div>
+                  <MemoizedConversationalForm />
+                </div>
+              </section>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Budget menu temporarily unavailable</div>}>
