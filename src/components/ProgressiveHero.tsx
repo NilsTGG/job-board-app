@@ -1,15 +1,83 @@
 import React, { useState } from 'react';
 import { ArrowRight, Diamond, Sparkles, ChevronDown, Calculator, MessageCircle } from 'lucide-react';
+import { DistanceCalculator } from '../utils/distanceCalculator';
+import { PricingCalculator } from '../utils/pricingCalculator';
 
 const ProgressiveHero: React.FC = () => {
   const [showQuickStart, setShowQuickStart] = useState(false);
   const [selectedAction, setSelectedAction] = useState<'quote' | 'submit' | null>(null);
+  const [pickupCoords, setPickupCoords] = useState('');
+  const [deliveryCoords, setDeliveryCoords] = useState('');
+  const [quote, setQuote] = useState<{
+    distance: number;
+    price: number;
+    time: number;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const calculatePrice = async () => {
+    if (!pickupCoords.trim() || !deliveryCoords.trim()) {
+      setError('Please enter both pickup and delivery coordinates');
+      return;
+    }
+
+    setIsCalculating(true);
+    setError(null);
+
+    try {
+      const pickup = DistanceCalculator.parseCoordinates(pickupCoords);
+      const delivery = DistanceCalculator.parseCoordinates(deliveryCoords);
+
+      if (!pickup || !delivery) {
+        setError('Invalid coordinate format. Use: X, Y, Z (e.g., 100, 64, -200)');
+        setIsCalculating(false);
+        return;
+      }
+
+      // Simulate brief calculation delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const analysis = DistanceCalculator.analyzeRoute(pickup, delivery);
+      const pricing = PricingCalculator.calculatePrice({
+        distance: analysis.distance,
+        urgency: 'soon',
+        insurance: 'basic',
+        dangerLevel: analysis.dangerLevel,
+        serviceType: 'delivery'
+      });
+
+      setQuote({
+        distance: analysis.distance,
+        price: pricing.totalPrice,
+        time: analysis.estimatedTime
+      });
+    } catch (err) {
+      setError('Error calculating distance. Please check coordinate format.');
+      console.error('Quote calculation error:', err);
+    }
+
+    setIsCalculating(false);
+  };
+
+  const handleCoordChange = (value: string, setter: (value: string) => void) => {
+    // Auto-format coordinates
+    let formatted = value;
+    if (value.match(/^\d+\s+\d+\s+\d+$/)) {
+      formatted = value.replace(/\s+/g, ", ");
+    }
+    setter(formatted);
+    
+    // Clear quote and error when coordinates change
+    if (quote) setQuote(null);
+    if (error) setError(null);
   };
 
   return (
@@ -126,6 +194,8 @@ const ProgressiveHero: React.FC = () => {
                     <label className="block text-gray-300 text-sm mb-2">Pickup Coordinates</label>
                     <input
                       type="text"
+                      value={pickupCoords}
+                      onChange={(e) => handleCoordChange(e.target.value, setPickupCoords)}
                       placeholder="100, 64, -200"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -133,6 +203,8 @@ const ProgressiveHero: React.FC = () => {
                           const nextInput = e.currentTarget.parentElement?.parentElement?.nextElementSibling?.querySelector('input');
                           if (nextInput) {
                             (nextInput as HTMLInputElement).focus();
+                          } else if (pickupCoords && deliveryCoords) {
+                            calculatePrice();
                           }
                         }
                       }}
@@ -143,23 +215,97 @@ const ProgressiveHero: React.FC = () => {
                     <label className="block text-gray-300 text-sm mb-2">Delivery Coordinates</label>
                     <input
                       type="text"
+                      value={deliveryCoords}
+                      onChange={(e) => handleCoordChange(e.target.value, setDeliveryCoords)}
                       placeholder="300, 64, 150"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
-                          const button = e.currentTarget.parentElement?.parentElement?.parentElement?.querySelector('button');
-                          if (button) {
-                            button.click();
+                          if (pickupCoords && deliveryCoords) {
+                            calculatePrice();
                           }
                         }
                       }}
-                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors">
-                    Calculate Price
+                  
+                  {/* Error Display */}
+                  {error && (
+                    <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3">
+                      <p className="text-red-300 text-sm">{error}</p>
+                    </div>
+                  )}
+
+                  {/* Quote Display */}
+                  {quote && (
+                    <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-4">
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <div className="text-lg font-bold text-white">{quote.distance}</div>
+                          <div className="text-green-300 text-xs">blocks</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold text-yellow-400 flex items-center justify-center gap-1">
+                            <Diamond className="h-4 w-4" />
+                            {quote.price}
+                          </div>
+                          <div className="text-green-300 text-xs">diamonds</div>
+                        </div>
+                        <div>
+                          <div className="text-lg font-bold text-white">~{quote.time}</div>
+                          <div className="text-green-300 text-xs">minutes</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <button 
+                    onClick={calculatePrice}
+                    disabled={!pickupCoords.trim() || !deliveryCoords.trim() || isCalculating}
+                    className={`w-full py-2 rounded transition-colors ${
+                      pickupCoords.trim() && deliveryCoords.trim() && !isCalculating
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    {isCalculating ? (
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Calculating...
+                      </div>
+                    ) : (
+                      'Calculate Price'
+                    )}
                   </button>
+                  
+                  {/* Submit to Full Form Button */}
+                  {quote && (
+                    <button
+                      onClick={() => {
+                        scrollToSection('submit-job');
+                        // Pre-fill the main form with coordinates
+                        setTimeout(() => {
+                          const pickupField = document.getElementById('pickupCoords') as HTMLInputElement;
+                          const deliveryField = document.getElementById('dropoffCoords') as HTMLInputElement;
+                          
+                          if (pickupField && pickupCoords) {
+                            pickupField.value = pickupCoords;
+                            pickupField.dispatchEvent(new Event('input', { bubbles: true }));
+                          }
+                          if (deliveryField && deliveryCoords) {
+                            deliveryField.value = deliveryCoords;
+                            deliveryField.dispatchEvent(new Event('input', { bubbles: true }));
+                          }
+                        }, 500);
+                      }}
+                      className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-2 rounded hover:from-green-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Submit Full Order
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
