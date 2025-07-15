@@ -42,8 +42,8 @@ function App() {
           <p className="text-xl text-gray-400">Minecraft Delivery Service</p>
           <div className="flex justify-center items-center gap-4 mt-4 text-sm text-gray-400">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span>Online Now</span>
+              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <span>Check Discord: NilsTG</span>
             </div>
             <div>•</div>
             <div>Payment in diamonds only</div>

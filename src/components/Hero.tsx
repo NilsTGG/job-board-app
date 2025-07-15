@@ -29,6 +29,16 @@ const Hero: React.FC = () => {
             Minecraft delivery service for players whose time is worth more than transport costs.
           </p>
           
+          {/* Quick Stats Bar */}
+          <div className="flex justify-center items-center gap-6 mb-8 text-sm text-gray-400">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <span>Check Discord: NilsTG</span>
+            </div>
+            <div>•</div>
+            <div>1,247+ Deliveries</div>
+          </div>
+          
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <button
               onClick={scrollToForm}
