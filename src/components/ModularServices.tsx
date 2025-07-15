@@ -22,7 +22,7 @@ const ModularServices: React.FC = () => {
                 <li>• Any item, any distance</li>
                 <li>• I risk my life, you don't</li>
                 <li>• Zero effort required from you</li>
-                <li>• Your time > diamond cost</li>
+                <li>• Your time &gt; diamond cost</li>
               </ul>
             </div>
             <div className="bg-blue-900/20 rounded-lg p-4">
