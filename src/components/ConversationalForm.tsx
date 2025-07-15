@@ -44,7 +44,6 @@ const ConversationalForm: React.FC = () => {
               onChange={(e) => updateFormData('discordUsername', e.target.value.toLowerCase())}
               placeholder="yourname (lowercase, no @)"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-              autoFocus
             />
             <p className="text-gray-400 text-sm mt-2">This is how I'll contact you about your delivery</p>
           </div>
@@ -78,7 +77,6 @@ const ConversationalForm: React.FC = () => {
               placeholder="e.g., '64 oak logs from my tree farm' or 'buy me a diamond pickaxe from spawn shops'"
               rows={4}
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 text-lg resize-none"
-              autoFocus
             />
             <p className="text-gray-400 text-sm mt-2">Be specific - it helps me give you accurate pricing</p>
           </div>
@@ -109,7 +107,6 @@ const ConversationalForm: React.FC = () => {
               onChange={(e) => updateFormData('pickupCoords', e.target.value)}
               placeholder="100, 64, -200"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg"
-              autoFocus
             />
             <p className="text-gray-400 text-sm mt-2">Where should I pick up the items?</p>
           </div>
@@ -152,7 +149,6 @@ const ConversationalForm: React.FC = () => {
               onChange={(e) => updateFormData('paymentOffer', e.target.value)}
               placeholder="e.g., 10 diamonds, 15 diamonds"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-lg"
-              autoFocus
             />
             <p className="text-gray-400 text-sm mt-2">Be realistic - my time isn't free</p>
           </div>
