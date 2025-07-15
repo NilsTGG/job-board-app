@@ -14,7 +14,7 @@ function App() {
           </div>
           <h2 className="text-2xl font-bold mb-4">Job Submitted!</h2>
           <p className="text-gray-400 mb-6">
-            I'll contact you on Discord within 30 minutes. Payment due on pickup.
+            I'll contact you on Discord when I'm online. Payment due on pickup.
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -29,24 +29,17 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700 py-4">
-        <div className="max-w-4xl mx-auto px-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Package className="h-8 w-8 text-blue-400" />
-            <div>
-              <h1 className="text-xl font-bold">Because You Won't™</h1>
-              <p className="text-sm text-gray-400">Minecraft Delivery Service</p>
-            </div>
-          </div>
-          <div className="text-right text-sm text-gray-400">
-            <div>Payment: Diamonds only</div>
-            <div>Contact: Discord</div>
-          </div>
-        </div>
-      </header>
-
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <Package className="h-10 w-10 text-blue-400" />
+            <h1 className="text-3xl font-bold">Because You Won't™</h1>
+          </div>
+          <p className="text-xl text-gray-400">Minecraft Delivery Service</p>
+          <p className="text-gray-500 mt-2">Payment in diamonds only • Response time: When I'm online</p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main Form */}
