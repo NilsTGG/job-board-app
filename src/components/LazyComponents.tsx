@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 
 // Lazy load heavy components
-export const LazyJobForm = lazy(() => import('./JobForm'));
+export const LazyJobForm = lazy(() => import('./ConversationalForm'));
 export const LazySmartPricingCalculator = lazy(() => import('./SmartPricingCalculator'));
 export const LazyTestimonials = lazy(() => import('./Testimonials'));
 export const LazyFAQ = lazy(() => import('./FAQ'));
