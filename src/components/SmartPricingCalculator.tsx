@@ -8,147 +8,112 @@ import {
   Zap,
   MapPin,
   Skull,
+  CheckCircle,
 } from "lucide-react";
 import { PRICING, UI_CONFIG } from "../constants";
 import { useDebounce } from "../hooks/useDebounce";
+import { DistanceCalculator } from "../utils/distanceCalculator";
+import { PricingCalculator } from "../utils/pricingCalculator";
+import { CoordinateInput } from "./CoordinateInput";
 
 interface PricingFactors {
-  distance: number;
+  pickupCoords: string;
+  deliveryCoords: string;
   dangerLevel: "safe" | "risky" | "dangerous" | "suicidal";
   urgency: "whenever" | "soon" | "urgent" | "emergency";
   itemValue: "cheap" | "valuable" | "precious" | "irreplaceable";
   timeOfDay: "day" | "night" | "peak" | "dead";
   weather: "clear" | "rain" | "storm" | "apocalypse";
+  serviceType: "delivery" | "shopping" | "rescue";
 }
 
 const SmartPricingCalculator: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [factors, setFactors] = useState<PricingFactors>({
-    distance: 100,
+    pickupCoords: "",
+    deliveryCoords: "",
     dangerLevel: "safe",
     urgency: "soon",
     itemValue: "cheap",
     timeOfDay: "day",
     weather: "clear",
+    serviceType: "delivery",
   });
 
+  const [calculatedDistance, setCalculatedDistance] = useState(0);
+  const [routeAnalysis, setRouteAnalysis] = useState(null);
   const [calculatedPrice, setCalculatedPrice] = useState(5);
-  const [priceBreakdown, setPriceBreakdown] = useState<
-    Array<{ factor: string; cost: number; reason: string }>
-  >([]);
+  const [priceBreakdown, setPriceBreakdown] = useState([]);
+  const [coordErrors, setCoordErrors] = useState({ pickup: "", delivery: "" });
 
   // Debounce the factors to prevent excessive calculations
   const debouncedFactors = useDebounce(factors, UI_CONFIG.DEBOUNCE_DELAY);
 
-  const calculatePrice = () => {
-    let basePrice = PRICING.BASE_FEE;
-    const breakdown: Array<{ factor: string; cost: number; reason: string }> =
-      [];
-
-    // Distance calculation
-    const distanceCost = Math.max(
-      0,
-      Math.ceil(debouncedFactors.distance / PRICING.CHUNKS_PER_DISTANCE_UNIT) *
-        PRICING.DISTANCE_MULTIPLIER
-    );
-    if (distanceCost > 0) {
-      breakdown.push({
-        factor: "Distance",
-        cost: distanceCost,
-        reason: `${debouncedFactors.distance} blocks = ${Math.ceil(
-          debouncedFactors.distance / PRICING.CHUNKS_PER_DISTANCE_UNIT
-        )} chunks of boredom`,
-      });
+  // Calculate distance whenever coordinates change
+  useEffect(() => {
+    if (!debouncedFactors.pickupCoords || !debouncedFactors.deliveryCoords) {
+      setCalculatedDistance(0);
+      setRouteAnalysis(null);
+      setCoordErrors({ pickup: "", delivery: "" });
+      return;
     }
 
-    // Danger level multiplier
-    const dangerInfo = PRICING.DANGER_MULTIPLIERS[debouncedFactors.dangerLevel];
-    if (dangerInfo.multiplier > 1) {
-      const dangerCost = Math.ceil(
-        (basePrice + distanceCost) * (dangerInfo.multiplier - 1)
-      );
-      breakdown.push({
-        factor: "Danger Tax",
-        cost: dangerCost,
-        reason: dangerInfo.reason,
-      });
+    const pickup = DistanceCalculator.parseCoordinates(debouncedFactors.pickupCoords);
+    const delivery = DistanceCalculator.parseCoordinates(debouncedFactors.deliveryCoords);
+
+    const newErrors = { pickup: "", delivery: "" };
+
+    if (!pickup) {
+      newErrors.pickup = "Invalid coordinate format";
+    }
+    if (!delivery) {
+      newErrors.delivery = "Invalid coordinate format";
     }
 
-    // Urgency surcharge
-    const urgencyInfo = PRICING.URGENCY_FEES[debouncedFactors.urgency];
-    if (urgencyInfo.fee > 0) {
-      breakdown.push({
-        factor: "Urgency Fee",
-        cost: urgencyInfo.fee,
-        reason: urgencyInfo.reason,
-      });
-    } else if (debouncedFactors.urgency === "whenever") {
-      const discount = Math.ceil(
-        (basePrice + distanceCost) * PRICING.PATIENCE_DISCOUNT_RATE
-      );
-      breakdown.push({
-        factor: "Patience Discount",
-        cost: -discount,
-        reason: "Thanks for not being in a rush",
-      });
+    setCoordErrors(newErrors);
+
+    if (pickup && delivery) {
+      const analysis = DistanceCalculator.analyzeRoute(pickup, delivery);
+      setCalculatedDistance(analysis.distance);
+      setRouteAnalysis(analysis);
+    } else {
+      setCalculatedDistance(0);
+      setRouteAnalysis(null);
+    }
+  }, [debouncedFactors.pickupCoords, debouncedFactors.deliveryCoords]);
+
+  // Calculate price whenever distance or other factors change
+  useEffect(() => {
+    if (calculatedDistance === 0 || !routeAnalysis) {
+      setCalculatedPrice(5);
+      setPriceBreakdown([]);
+      return;
     }
 
-    // Item value insurance
-    const valueInfo = PRICING.VALUE_FEES[debouncedFactors.itemValue];
-    if (valueInfo.fee > 0) {
-      breakdown.push({
-        factor: "Insurance",
-        cost: valueInfo.fee,
-        reason: valueInfo.reason,
-      });
-    }
+    const pricing = PricingCalculator.calculatePrice({
+      distance: calculatedDistance,
+      urgency: debouncedFactors.urgency,
+      insurance: debouncedFactors.itemValue === "cheap" ? "none" : 
+                debouncedFactors.itemValue === "valuable" ? "basic" : "premium",
+      dangerLevel: routeAnalysis.dangerLevel,
+      serviceType: debouncedFactors.serviceType
+    });
 
-    // Time of day modifier
-    const timeInfo = PRICING.TIME_FEES[debouncedFactors.timeOfDay];
-    if (timeInfo.fee !== 0) {
-      breakdown.push({
-        factor: "Time Modifier",
-        cost: timeInfo.fee,
-        reason: timeInfo.reason,
-      });
-    }
-
-    // Weather conditions
-    const weatherInfo = PRICING.WEATHER_FEES[debouncedFactors.weather];
-    if (weatherInfo.fee > 0) {
-      breakdown.push({
-        factor: "Weather Tax",
-        cost: weatherInfo.fee,
-        reason: weatherInfo.reason,
-      });
-    }
-
-    // Calculate total
-    const totalCost = Math.max(
-      PRICING.MINIMUM_PRICE,
-      basePrice + breakdown.reduce((sum, item) => sum + item.cost, 0)
-    );
-
-    // Apply danger multiplier to final price
-    const finalPrice = Math.ceil(
-      totalCost *
-        PRICING.DANGER_MULTIPLIERS[debouncedFactors.dangerLevel].multiplier
-    );
-
-    setCalculatedPrice(finalPrice);
+    setCalculatedPrice(pricing.totalPrice);
     setPriceBreakdown([
       {
         factor: "Base Fee",
-        cost: basePrice,
+        cost: pricing.basePrice,
         reason: "Minimum charge for existing",
       },
-      ...breakdown,
+      {
+        factor: "Distance",
+        cost: pricing.distanceCost,
+        reason: `${calculatedDistance} blocks = ${Math.ceil(calculatedDistance / 100)} chunks of boredom`,
+      },
+      ...pricing.modifiers,
     ]);
-  };
-
-  useEffect(() => {
-    calculatePrice();
-  }, [debouncedFactors]);
+  }, [calculatedDistance, routeAnalysis, debouncedFactors]);
 
   const getDangerIcon = (level: string) => {
     switch (level) {
@@ -180,6 +145,13 @@ const SmartPricingCalculator: React.FC = () => {
     }
   };
 
+  const handleCoordChange = (type: 'pickup' | 'delivery', value: string) => {
+    setFactors(prev => ({
+      ...prev,
+      [`${type}Coords`]: value
+    }));
+  };
+
   return (
     <section className="py-16 bg-gray-800">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,15 +163,14 @@ const SmartPricingCalculator: React.FC = () => {
             <Calculator className="h-6 w-6" />
             Smart Pricing Calculator
             <span className="text-sm opacity-80">
-              (Because transparency is overrated)
+              (Coordinate-based pricing)
             </span>
           </button>
 
           {isOpen && (
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-              Get an instant quote based on distance, danger level, urgency, and
-              my current mood. Prices subject to change based on how much I
-              don't want to do your job.
+              Get an instant quote based on your actual pickup and delivery coordinates. 
+              No guessing distances - just paste your coordinates and get accurate pricing.
             </p>
           )}
         </div>
@@ -207,70 +178,95 @@ const SmartPricingCalculator: React.FC = () => {
         {isOpen && (
           <div className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden">
             <div className="p-6 space-y-6">
-              {/* Distance Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Distance (blocks)
-                </label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="10"
-                    max="2000"
-                    value={factors.distance}
-                    onChange={(e) =>
-                      setFactors((prev) => ({
-                        ...prev,
-                        distance: parseInt(e.target.value),
-                      }))
-                    }
-                    className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+              {/* Coordinate Inputs - Primary Input Method */}
+              <div className="bg-blue-900/10 border border-blue-700/30 rounded-lg p-4">
+                <h3 className="text-white font-medium mb-4 flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-blue-400" />
+                  Enter Your Coordinates
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CoordinateInput
+                    label="Pickup Location"
+                    value={factors.pickupCoords}
+                    onChange={(value) => handleCoordChange('pickup', value)}
+                    placeholder="100, 64, -200"
+                    icon={<MapPin className="h-4 w-4 text-green-400" />}
+                    error={coordErrors.pickup}
+                    type="pickup"
                   />
-                  <div className="flex items-center gap-2 min-w-[120px]">
-                    <MapPin className="h-4 w-4 text-blue-400" />
-                    <span className="text-white font-medium">
-                      {factors.distance} blocks
-                    </span>
+                  
+                  <CoordinateInput
+                    label="Delivery Location"
+                    value={factors.deliveryCoords}
+                    onChange={(value) => handleCoordChange('delivery', value)}
+                    placeholder="300, 64, 150"
+                    icon={<MapPin className="h-4 w-4 text-blue-400" />}
+                    error={coordErrors.delivery}
+                    type="delivery"
+                  />
+                </div>
+
+                {/* Auto-calculated Distance Display */}
+                {calculatedDistance > 0 && routeAnalysis && (
+                  <div className="mt-4 p-3 bg-gray-800 rounded-lg border border-gray-600">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="h-5 w-5 text-green-400" />
+                        <div>
+                          <div className="text-white font-medium">
+                            Distance: {calculatedDistance} blocks
+                          </div>
+                          <div className="text-gray-400 text-sm">
+                            Travel time: ~{routeAnalysis.estimatedTime} minutes
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-blue-400 font-bold">
+                          Base: {Math.ceil(calculatedDistance / 100) * 2 + 3} diamonds
+                        </div>
+                        <div className="text-gray-400 text-xs">
+                          Before modifiers
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {routeAnalysis.specialNotes.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-gray-700">
+                        {routeAnalysis.specialNotes.map((note, index) => (
+                          <div key={index} className="text-yellow-300 text-xs flex items-center gap-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            {note}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="text-xs text-gray-400 mt-1">
-                  {factors.distance < 100
-                    ? "Practically next door"
-                    : factors.distance < 500
-                    ? "Reasonable distance"
-                    : factors.distance < 1000
-                    ? "Getting annoying"
-                    : "Why do you live so far away?"}
-                </div>
+                )}
               </div>
 
-              {/* Danger Level */}
+              {/* Service Type Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Danger Level
+                  Service Type
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  {(["safe", "risky", "dangerous", "suicidal"] as const).map(
-                    (level) => (
-                      <button
-                        key={level}
-                        onClick={() =>
-                          setFactors((prev) => ({
-                            ...prev,
-                            dangerLevel: level,
-                          }))
-                        }
-                        className={`p-3 rounded-lg border transition-colors flex items-center gap-2 ${
-                          factors.dangerLevel === level
-                            ? "border-blue-500 bg-blue-900/30 text-white"
-                            : "border-gray-600 bg-gray-800 text-gray-300 hover:border-gray-500"
-                        }`}
-                      >
-                        {getDangerIcon(level)}
-                        <span className="capitalize text-sm">{level}</span>
-                      </button>
-                    )
-                  )}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  {(["delivery", "shopping", "rescue"] as const).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() =>
+                        setFactors((prev) => ({ ...prev, serviceType: type }))
+                      }
+                      className={`p-3 rounded-lg border transition-colors flex items-center gap-2 ${
+                        factors.serviceType === type
+                          ? "border-blue-500 bg-blue-900/30 text-white"
+                          : "border-gray-600 bg-gray-800 text-gray-300 hover:border-gray-500"
+                      }`}
+                    >
+                      <span className="capitalize text-sm">{type}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -386,7 +382,10 @@ const SmartPricingCalculator: React.FC = () => {
                     Estimated Cost
                   </h3>
                   <p className="text-blue-100 text-sm">
-                    Subject to my mood and availability
+                    {calculatedDistance > 0 
+                      ? `Based on ${calculatedDistance} block distance`
+                      : "Enter coordinates for accurate pricing"
+                    }
                   </p>
                 </div>
                 <div className="text-right">
@@ -401,39 +400,40 @@ const SmartPricingCalculator: React.FC = () => {
               </div>
 
               {/* Price Breakdown */}
-              <div className="bg-black/20 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3">Price Breakdown</h4>
-                <div className="space-y-2">
-                  {priceBreakdown.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <div>
-                        <span className="text-blue-100 font-medium">
-                          {item.factor}:
-                        </span>
-                        <span className="text-blue-200 ml-2">
-                          {item.reason}
+              {priceBreakdown.length > 0 && (
+                <div className="bg-black/20 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-3">Price Breakdown</h4>
+                  <div className="space-y-2">
+                    {priceBreakdown.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <div>
+                          <span className="text-blue-100 font-medium">
+                            {item.factor}:
+                          </span>
+                          <span className="text-blue-200 ml-2">
+                            {item.reason}
+                          </span>
+                        </div>
+                        <span
+                          className={`font-bold ${
+                            item.cost >= 0 ? "text-white" : "text-green-400"
+                          }`}
+                        >
+                          {item.cost >= 0 ? "+" : ""}
+                          {item.cost} 💎
                         </span>
                       </div>
-                      <span
-                        className={`font-bold ${
-                          item.cost >= 0 ? "text-white" : "text-green-400"
-                        }`}
-                      >
-                        {item.cost >= 0 ? "+" : ""}
-                        {item.cost} 💎
-                      </span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="mt-4 text-center">
                 <p className="text-blue-100 text-sm italic">
-                  * Prices are estimates. Actual cost may vary based on how much
-                  I don't want to do your job.
+                  * Prices are calculated from actual coordinates. No guessing required!
                 </p>
               </div>
             </div>

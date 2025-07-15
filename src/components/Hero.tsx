@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Diamond, Sparkles } from 'lucide-react';
+import QuickQuoteWidget from './QuickQuoteWidget';
 
 const Hero: React.FC = () => {
   const scrollToForm = () => {
@@ -58,6 +59,11 @@ const Hero: React.FC = () => {
               <div className="text-blue-400 text-3xl font-bold mb-2">0%</div>
               <div className="text-gray-300">Chance I'll be nice about it</div>
             </div>
+          </div>
+          
+          {/* Quick Quote Widget */}
+          <div className="mt-16">
+            <QuickQuoteWidget />
           </div>
         </div>
       </div>
