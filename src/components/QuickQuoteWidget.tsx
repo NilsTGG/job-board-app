@@ -13,6 +13,7 @@ const QuickQuoteWidget: React.FC = () => {
     time: number;
   } | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Debounce coordinate inputs
   const debouncedPickup = useDebounce(pickupCoords, 500);
@@ -22,31 +23,40 @@ const QuickQuoteWidget: React.FC = () => {
   useEffect(() => {
     if (!debouncedPickup || !debouncedDelivery) {
       setQuote(null);
+      setError(null);
       return;
     }
 
     setIsCalculating(true);
+    setError(null);
 
-    const pickup = DistanceCalculator.parseCoordinates(debouncedPickup);
-    const delivery = DistanceCalculator.parseCoordinates(debouncedDelivery);
+    try {
+      const pickup = DistanceCalculator.parseCoordinates(debouncedPickup);
+      const delivery = DistanceCalculator.parseCoordinates(debouncedDelivery);
 
-    if (pickup && delivery) {
-      const analysis = DistanceCalculator.analyzeRoute(pickup, delivery);
-      const pricing = PricingCalculator.calculatePrice({
-        distance: analysis.distance,
-        urgency: 'soon',
-        insurance: 'basic',
-        dangerLevel: analysis.dangerLevel,
-        serviceType: 'delivery'
-      });
+      if (pickup && delivery) {
+        const analysis = DistanceCalculator.analyzeRoute(pickup, delivery);
+        const pricing = PricingCalculator.calculatePrice({
+          distance: analysis.distance,
+          urgency: 'soon',
+          insurance: 'basic',
+          dangerLevel: analysis.dangerLevel,
+          serviceType: 'delivery'
+        });
 
-      setQuote({
-        distance: analysis.distance,
-        price: pricing.totalPrice,
-        time: analysis.estimatedTime
-      });
-    } else {
+        setQuote({
+          distance: analysis.distance,
+          price: pricing.totalPrice,
+          time: analysis.estimatedTime
+        });
+      } else {
+        setQuote(null);
+        setError('Invalid coordinate format. Use: X, Y, Z (e.g., 100, 64, -200)');
+      }
+    } catch (err) {
       setQuote(null);
+      setError('Error calculating distance. Please check coordinate format.');
+      console.error('Quote calculation error:', err);
     }
 
     setIsCalculating(false);
@@ -93,6 +103,9 @@ const QuickQuoteWidget: React.FC = () => {
               className="w-full pl-10 pr-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
           </div>
+          {pickupCoords && !DistanceCalculator.parseCoordinates(pickupCoords) && (
+            <p className="text-red-300 text-xs mt-1">Invalid format</p>
+          )}
         </div>
 
         <div>
@@ -107,8 +120,18 @@ const QuickQuoteWidget: React.FC = () => {
               className="w-full pl-10 pr-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
           </div>
+          {deliveryCoords && !DistanceCalculator.parseCoordinates(deliveryCoords) && (
+            <p className="text-red-300 text-xs mt-1">Invalid format</p>
+          )}
         </div>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3 mb-4">
+          <p className="text-red-300 text-sm">{error}</p>
+        </div>
+      )}
 
       {/* Quote Display */}
       {isCalculating && (
@@ -137,6 +160,13 @@ const QuickQuoteWidget: React.FC = () => {
               <div className="text-blue-200 text-sm">minutes</div>
             </div>
           </div>
+        </div>
+      )}
+      
+      {/* Debug info for testing */}
+      {process.env.NODE_ENV === 'development' && (pickupCoords || deliveryCoords) && (
+        <div className="text-xs text-blue-200 mt-2">
+          Debug: Pickup valid: {DistanceCalculator.parseCoordinates(pickupCoords) ? '✅' : '❌'} | Delivery valid: {DistanceCalculator.parseCoordinates(deliveryCoords) ? '✅' : '❌'}
         </div>
       )}
 
