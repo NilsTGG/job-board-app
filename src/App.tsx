@@ -89,7 +89,7 @@ function App() {
                   <label className="block text-white font-medium mb-2">What needs delivered?</label>
                   <textarea
                     name="itemDescription"
-                    placeholder="e.g., 64 oak logs, diamond pickaxe, etc."
+                    placeholder="e.g., 64 oak logs from spawn shops, diamond pickaxe from PlayerShop, etc."
                     required
                     rows={3}
                     className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700 resize-none"
@@ -148,7 +148,7 @@ function App() {
                   <label className="block text-white font-medium mb-2">Notes (optional)</label>
                   <textarea
                     name="notes"
-                    placeholder="Any special instructions..."
+                    placeholder="Special instructions, remote pickup request, or just vent about your day..."
                     rows={2}
                     className="w-full px-4 py-3 bg-gray-700/80 backdrop-blur-sm border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:bg-gray-700 resize-none"
                   />
@@ -237,6 +237,7 @@ function App() {
                 <div><strong>Response time:</strong> When I'm online</div>
                 <div><strong>Payment:</strong> Diamonds only</div>
               </div>
+              <div><strong>Remote pickup:</strong> Available</div>
             </div>
           </div>
         </div>
@@ -267,6 +268,17 @@ function App() {
               <li>• Visit multiple shops</li>
               <li>• Compare prices</li>
               <li>• Item cost + 5-7 diamonds</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">📱 Remote Pickup</h3>
+            <p className="text-gray-300 text-sm mb-3">Stay at your base, I'll come to you</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Text me your coords + what you need</li>
+              <li>• Keep building while I handle logistics</li>
+              <li>• Perfect for active builders</li>
+              <li>• 3-8 diamonds + item costs</li>
             </ul>
           </div>
           
