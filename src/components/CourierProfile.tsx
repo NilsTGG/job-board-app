@@ -1,8 +1,10 @@
 import React from "react";
 import { User, MapPin, Clock, Star, Coffee } from "lucide-react";
-import { courierStats } from "../utils/courierStats";
+import { useDeliveryStore } from "../store/deliveryStore";
 
 const CourierProfile: React.FC = () => {
+  const { stats } = useDeliveryStore();
+
   return (
     <section className="py-20 bg-gray-900 border-t border-gray-800">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,19 +35,19 @@ const CourierProfile: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-400">
-                    {courierStats.deliveries}
+                    {stats.successfulDeliveries}
                   </div>
                   <div className="text-sm text-gray-400">Deliveries</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-400">
-                    {courierStats.successRate}%
+                    {stats.successRate.toFixed(1)}%
                   </div>
                   <div className="text-sm text-gray-400">Success Rate</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-yellow-400">
-                    {courierStats.starRating}
+                    4.8
                   </div>
                   <div className="text-sm text-gray-400">Star Rating</div>
                 </div>

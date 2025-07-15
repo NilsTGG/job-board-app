@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProgressiveHero from './components/ProgressiveHero';
 import StickyNavigation from './components/StickyNavigation';
@@ -7,17 +8,15 @@ import Stats from './components/Stats';
 import Pricing from './components/Pricing';
 import ConversationalForm from './components/ConversationalForm';
 import Footer from './components/Footer';
+import UnifiedQuoteWidget from './components/UnifiedQuoteWidget';
 import { useKonamiCode } from './hooks/useKonamiCode';
 import ProgressiveEnhancement from './components/ProgressiveEnhancement';
+import { useDeliveryStore } from './store/deliveryStore';
 import { 
-  LazyJobForm,
-  LazySmartPricingCalculator,
   LazyTestimonials,
   LazyFAQ,
   LazyBrokePeopleMenu,
   LazyCourierProfile,
-  SuspenseJobForm,
-  SuspenseCalculator,
   SuspenseSection,
   SuspenseGeneric
 } from './components/LazyComponents';
@@ -28,10 +27,17 @@ const MemoizedModularServices = React.memo(ModularServices);
 const MemoizedStats = React.memo(Stats);
 const MemoizedPricing = React.memo(Pricing);
 const MemoizedConversationalForm = React.memo(ConversationalForm);
+const MemoizedUnifiedQuoteWidget = React.memo(UnifiedQuoteWidget);
 const MemoizedFooter = React.memo(Footer);
 
 function App() {
   const { isActivated } = useKonamiCode();
+  const { trackVisitor } = useDeliveryStore();
+
+  // Track visitor on app load
+  useEffect(() => {
+    trackVisitor();
+  }, [trackVisitor]);
 
   const fallbackContent = (
     <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -109,10 +115,20 @@ function App() {
               <MemoizedPricing />
             </ErrorBoundary>
             
-            <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Pricing calculator temporarily unavailable</div>}>
-              <SuspenseCalculator>
-                <LazySmartPricingCalculator />
-              </SuspenseCalculator>
+            <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Quote calculator temporarily unavailable</div>}>
+              <section className="py-16 bg-gray-800">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                      Advanced Quote Calculator
+                    </h2>
+                    <p className="text-xl text-gray-400">
+                      Get detailed pricing with custom options
+                    </p>
+                  </div>
+                  <MemoizedUnifiedQuoteWidget variant="section" showFullCalculator={true} />
+                </div>
+              </section>
             </ErrorBoundary>
             
             <ErrorBoundary fallback={<div className="p-4 text-center text-red-400">Testimonials section temporarily unavailable</div>}>

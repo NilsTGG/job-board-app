@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle, Package, MapPin, Diamond } from 'lucide-react';
 import { useForm, ValidationError } from '@formspree/react';
+import { useDeliveryStore } from '../store/deliveryStore';
 
 interface FormStep {
   id: string;
@@ -12,17 +13,14 @@ interface FormStep {
 
 const ConversationalForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState({
-    discordUsername: '',
-    ign: '',
-    itemDescription: '',
-    pickupCoords: '',
-    dropoffCoords: '',
-    paymentOffer: '',
-    urgency: 'soon',
-    notes: ''
-  });
   const [state, handleSubmit] = useForm('xqabvypp');
+  const { 
+    formData, 
+    updateFormData, 
+    resetForm, 
+    trackJobSubmission,
+    setSubmitting 
+  } = useDeliveryStore();
 
   // Handle Enter key navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -47,8 +45,11 @@ const ConversationalForm: React.FC = () => {
     }
   };
 
-  const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    trackJobSubmission();
+    handleSubmit(e);
   };
 
   const steps: FormStep[] = [
@@ -261,11 +262,6 @@ const ConversationalForm: React.FC = () => {
     }
   };
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSubmit(e);
-  };
-
   if (state.succeeded) {
     return (
       <div className="max-w-2xl mx-auto text-center">
@@ -279,7 +275,10 @@ const ConversationalForm: React.FC = () => {
             Payment is due when I arrive at the pickup location.
           </p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => {
+              resetForm();
+              setCurrentStep(0);
+            }}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Submit Another Job

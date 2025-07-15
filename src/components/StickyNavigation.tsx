@@ -1,38 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator, MessageCircle, Package, Diamond, Menu, X } from 'lucide-react';
+import { NavigationService } from '../services/NavigationService';
+import { useDeliveryStore } from '../store/deliveryStore';
 
 const StickyNavigation: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
+  const { activeSection, setActiveSection } = useDeliveryStore();
 
   useEffect(() => {
-    const handleScroll = () => {
+    const cleanup = NavigationService.setupScrollTracking((section) => {
+      setActiveSection(section);
       // Show sticky nav after hero section
       setIsVisible(window.scrollY > window.innerHeight * 0.8);
-      
-      // Update active section
-      const sections = ['services', 'pricing', 'submit-job'];
-      const current = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      setActiveSection(current || '');
-    };
+    });
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return cleanup;
   }, []);
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    NavigationService.scrollToSection(sectionId);
     setIsMobileMenuOpen(false);
   };
 

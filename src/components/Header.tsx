@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Menu, X, Package, Bell } from 'lucide-react';
+import { NavigationService } from '../services/NavigationService';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [notifications] = useState(3); // Simulated notification count
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    NavigationService.scrollToSection(sectionId);
     setIsMenuOpen(false);
   };
 

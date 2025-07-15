@@ -1,27 +1,63 @@
 import React from 'react';
 import { Check, Diamond, Star, Zap } from 'lucide-react';
-import { SERVICES } from '../constants';
+import { PricingService } from '../services/PricingService';
+import { NavigationService } from '../services/NavigationService';
 
 interface PricingProps {}
 
 const Pricing: React.FC<PricingProps> = () => {
   const scrollToForm = (tier: string) => {
-    const element = document.getElementById('submit-job');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      // Pre-fill the payment offer field
-      setTimeout(() => {
-        const paymentField = document.getElementById('paymentOffer') as HTMLInputElement;
-        if (paymentField) {
-          const tierPrices = { Basic: '5 diamonds', Premium: '15 diamonds', Deluxe: '30 diamonds' };
-          paymentField.value = tierPrices[tier as keyof typeof tierPrices] || '';
-          paymentField.focus();
-        }
-      }, 500);
-    }
+    NavigationService.scrollToSection('submit-job');
+    // Pre-fill the payment offer field
+    setTimeout(() => {
+      const paymentField = document.getElementById('paymentOffer') as HTMLInputElement;
+      if (paymentField) {
+        const price = PricingService.getServiceTierPrice(tier as 'Basic' | 'Premium' | 'Deluxe');
+        paymentField.value = `${price} diamonds`;
+        paymentField.focus();
+      }
+    }, 500);
   };
 
-  const pricingTiers = SERVICES.DELIVERY_TIERS;
+  const pricingTiers = [
+    {
+      name: "Basic",
+      price: `${PricingService.getServiceTierPrice('Basic')} Diamonds`,
+      description: "Standard delivery service",
+      features: [
+        "Single item delivery",
+        "Standard routes",
+        "Professional service",
+        "Delivery within 24 hours*"
+      ]
+    },
+    {
+      name: "Premium", 
+      price: `${PricingService.getServiceTierPrice('Premium')} Diamonds`,
+      description: "Enhanced service tier",
+      features: [
+        "Up to 5 items",
+        "Optimized routes", 
+        "Priority support",
+        "Priority queue access",
+        "Delivery within 12 hours*"
+      ],
+      popular: true
+    },
+    {
+      name: "Deluxe",
+      price: `${PricingService.getServiceTierPrice('Deluxe')} Diamonds`, 
+      description: "Premium delivery experience",
+      features: [
+        "Unlimited items",
+        "Express delivery",
+        "Premium support", 
+        "Full insurance coverage",
+        "Delivery within 6 hours*",
+        "Guaranteed delivery**"
+      ]
+    }
+  ];
 
   return (
     <section id="pricing" className="py-20 bg-gray-800">

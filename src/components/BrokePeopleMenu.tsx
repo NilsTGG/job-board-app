@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Coins, AlertTriangle, Shield, Clock, Package, Users, Home, Zap } from 'lucide-react';
+import { PricingService } from '../services/PricingService';
 
 const BrokePeopleMenu: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -17,7 +18,7 @@ const BrokePeopleMenu: React.FC = () => {
     {
       icon: Package,
       service: "Basic Delivery (within 300 blocks)",
-      price: "3 diamonds",
+      price: `${PricingService.getBrokePersonPrice('basic-delivery', 300)} diamonds`,
       notes: "Includes sarcasm and passive-aggression at no extra cost.",
       expandedContent: "Look, I get it. You're broke. But even broke people need stuff moved sometimes. This covers short-distance hauling within a reasonable area. Don't expect me to be happy about the low pay, but I'll do it. Barely.",
       color: "blue"
@@ -25,7 +26,7 @@ const BrokePeopleMenu: React.FC = () => {
     {
       icon: Zap,
       service: "Multi-Shop Delivery",
-      price: "5 diamonds", 
+      price: `${PricingService.getBrokePersonPrice('multi-shop', 500)} diamonds`,
       notes: "Because you couldn't walk to two places. Tragic.",
       expandedContent: "The absolute minimum for coordinating multiple shop visits. I'll hit 2-3 shops max for this price. Want more? Pay more. It's not rocket science, it's basic economics.",
       color: "orange"
@@ -33,7 +34,7 @@ const BrokePeopleMenu: React.FC = () => {
     {
       icon: Users,
       service: "Villager Transport",
-      price: "8 diamonds (with insurance)",
+      price: `${PricingService.getBrokePersonPrice('villager-transport', 400)} diamonds (with insurance)`,
       notes: "Without insurance? You don't even want to know.",
       expandedContent: "Villagers are the worst. They're slow, they're stupid, and they die if you look at them wrong. 8 diamonds includes basic 'oops I killed your librarian' insurance. Without insurance? 5 diamonds and you're gambling with your trades.",
       color: "green"
@@ -41,7 +42,7 @@ const BrokePeopleMenu: React.FC = () => {
     {
       icon: Home,
       service: "Item Relocation (within your base)",
-      price: "2 diamonds",
+      price: `${PricingService.getBrokePersonPrice('item-relocation', 50)} diamonds`,
       notes: "Literally carrying something 10 blocks. Can't believe this is real.",
       expandedContent: "This is for when you're too lazy to move stuff within your own base. I'm talking chest-to-chest, farm-to-storage type moves. It's embarrassing that this service exists, but here we are.",
       color: "purple"
@@ -49,7 +50,7 @@ const BrokePeopleMenu: React.FC = () => {
     {
       icon: AlertTriangle,
       service: "Emergency Rescue",
-      price: "Starts at 7 diamonds",
+      price: `Starts at ${PricingService.getBrokePersonPrice('emergency-rescue', 600)} diamonds`,
       notes: "Oh no, you're stuck. Again.",
       expandedContent: "Got yourself into trouble? Died in lava? Lost in a cave? I'll bail you out, but I'm going to judge you the entire time. Price goes up based on how stupid your situation is.",
       color: "red"
@@ -57,7 +58,7 @@ const BrokePeopleMenu: React.FC = () => {
     {
       icon: Clock,
       service: "Low Priority Queue Slot",
-      price: "1 diamond",
+      price: `${PricingService.getBrokePersonPrice('low-priority', 100)} diamond`,
       notes: "I'll get to it. Eventually. Maybe.",
       expandedContent: "Rock bottom pricing for rock bottom service. Your job goes to the very end of my list. Perfect for non-urgent tasks when you're really, truly broke. No guarantees on timing.",
       color: "gray"

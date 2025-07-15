@@ -1,38 +1,35 @@
 import React from "react";
 import { TrendingUp, Clock, Package, Users, Activity } from "lucide-react";
-import { siteStatsConfig } from "../utils/siteStatsConfig";
+import { useDeliveryStore } from "../store/deliveryStore";
 
 const Stats: React.FC = () => {
-  const stats = siteStatsConfig;
-
-  const successRate = stats.successRate;
-  const avgTime = stats.averageDeliveryHours;
+  const { stats } = useDeliveryStore();
 
   const displayStats = [
     {
       icon: Package,
-      number: "1,247",
-      label: "Total Deliveries",
+      number: stats.successfulDeliveries.toLocaleString(),
+      label: "Successful Deliveries",
       subtext: "Successfully completed",
       color: "blue",
     },
     {
       icon: Users,
-      number: "847",
-      label: "Happy Customers",
+      number: stats.totalVisitors.toLocaleString(),
+      label: "Total Visitors",
       subtext: "Mostly satisfied",
       color: "green",
     },
     {
       icon: Clock,
-      number: "2.3",
+      number: stats.averageDeliveryTime.toFixed(1),
       label: "Avg Delivery Time",
       subtext: "Hours (when I'm motivated)",
       color: "yellow",
     },
     {
       icon: TrendingUp,
-      number: "99.2%",
+      number: `${stats.successRate.toFixed(1)}%`,
       label: "Success Rate",
       subtext: "Pretty reliable",
       color: "purple",
