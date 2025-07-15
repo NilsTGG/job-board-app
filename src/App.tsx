@@ -302,6 +302,46 @@ function App() {
               <li>• 20-75 diamonds depending on urgency</li>
             </ul>
           </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">💰 Debt Collection</h3>
+            <p className="text-gray-300 text-sm mb-3">Professional awkward conversation handler</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Collect unpaid trades and IOUs</li>
+              <li>• Handle borrowed items never returned</li>
+              <li>• 5-15 diamonds + 20% of debt</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">🛒 Bulk Shopping Runs</h3>
+            <p className="text-gray-300 text-sm mb-3">Your personal shopping slave</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Multi-shop coordination</li>
+              <li>• Price comparison included</li>
+              <li>• Item cost + 10-25 diamonds</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">🚨 Emergency Supply Drops</h3>
+            <p className="text-gray-300 text-sm mb-3">Rescue service for the helpless</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Food delivery to prevent starvation</li>
+              <li>• Tools when you're stuck mining</li>
+              <li>• 20-75 diamonds + premium surcharge</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-2">🤝 Proxy Shopping</h3>
+            <p className="text-gray-300 text-sm mb-3">Social anxiety delivery service</p>
+            <ul className="text-gray-400 text-sm space-y-1">
+              <li>• Handle seller negotiations</li>
+              <li>• Deal with difficult shop owners</li>
+              <li>• Item cost + 5-12 diamonds</li>
+            </ul>
+          </div>
         </div>
       </div>
       {/* Footer */}
