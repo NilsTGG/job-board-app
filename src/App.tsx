@@ -294,30 +294,6 @@ function App() {
               ]
             },
             {
-              title: "Newbie Shopping Assistant",
-              subtitle: "",
-              price: "4 diamonds",
-              description: "I'll teach you where shops are (once)",
-              details: [
-                "• Personal shopping tour",
-                "• Show you important shop locations",
-                "• Explain how to use shops",
-                "• One-time service only"
-              ]
-            },
-            {
-              title: "Coordinate Navigation Help",
-              subtitle: "",
-              price: "1 diamond",
-              description: "Because you can't read F3 screen",
-              details: [
-                "• Help you understand coordinates",
-                "• Guide you to specific locations",
-                "• Basic navigation tutorial",
-                "• Patience not guaranteed"
-              ]
-            },
-            {
               title: "Low Priority Queue Slot",
               subtitle: "",
               price: "1 diamond",
