@@ -58,13 +58,7 @@ export default defineConfig({
     // Enable source maps for debugging
     sourcemap: false,
     // Minify for production
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    minify: 'esbuild'
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],
