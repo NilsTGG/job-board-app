@@ -195,8 +195,16 @@ function App() {
                   <span className="text-white">3 diamonds</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Per 100 blocks:</span>
+                  <span className="text-gray-400">Overworld (per 500 blocks):</span>
                   <span className="text-white">+2 diamonds</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Nether highway (per 4000 blocks):</span>
+                  <span className="text-white">+2 diamonds</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Off-highway locations:</span>
+                  <span className="text-white">+3 diamonds</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Nether/End:</span>
@@ -205,6 +213,14 @@ function App() {
                 <div className="flex justify-between">
                   <span className="text-gray-400">Rush jobs:</span>
                   <span className="text-white">+50-100%</span>
+                </div>
+                <div className="mt-3 pt-2 border-t border-gray-600">
+                  <div className="text-xs text-gray-500">
+                    <div className="mb-1">💡 <strong>Examples:</strong></div>
+                    <div>• Spawn to 1000 blocks: 3 diamonds</div>
+                    <div>• Spawn to 8000 blocks: 5 diamonds</div>
+                    <div>• Remote base (no portal): 8 diamonds</div>
+                  </div>
                 </div>
               </div>
             </div>
