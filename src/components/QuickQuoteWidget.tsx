@@ -82,6 +82,15 @@ const QuickQuoteWidget: React.FC = () => {
     }
   };
 
+  // Auto-format coordinates as user types
+  const handleCoordChange = (value: string, setter: (value: string) => void) => {
+    // Auto-format common coordinate patterns
+    let formatted = value;
+    if (value.match(/^\d+\s+\d+\s+\d+$/)) {
+      formatted = value.replace(/\s+/g, ", ");
+    }
+    setter(formatted);
+  };
   return (
     <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 shadow-lg">
       <div className="flex items-center gap-3 mb-4">
@@ -98,7 +107,7 @@ const QuickQuoteWidget: React.FC = () => {
             <input
               type="text"
               value={pickupCoords}
-              onChange={(e) => setPickupCoords(e.target.value)}
+              onChange={(e) => handleCoordChange(e.target.value, setPickupCoords)}
               placeholder="100, 64, -200"
               className="w-full pl-10 pr-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
@@ -115,7 +124,7 @@ const QuickQuoteWidget: React.FC = () => {
             <input
               type="text"
               value={deliveryCoords}
-              onChange={(e) => setDeliveryCoords(e.target.value)}
+              onChange={(e) => handleCoordChange(e.target.value, setDeliveryCoords)}
               placeholder="300, 64, 150"
               className="w-full pl-10 pr-3 py-2 bg-white/10 border border-white/20 rounded text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             />
