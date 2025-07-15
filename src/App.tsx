@@ -1,9 +1,18 @@
 import React from 'react';
-import { Package, Diamond, MapPin, MessageCircle, Clock } from 'lucide-react';
+import { Package, Diamond, MapPin, MessageCircle, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import { useForm, ValidationError } from '@formspree/react';
 
 function App() {
   const [state, handleSubmit] = useForm('xqabvypp');
+  const [brokeMenuOpen, setBrokeMenuOpen] = React.useState(false);
+  const [expandedServices, setExpandedServices] = React.useState<Record<string, boolean>>({});
+
+  const toggleService = (serviceId: string) => {
+    setExpandedServices(prev => ({
+      ...prev,
+      [serviceId]: !prev[serviceId]
+    }));
+  };
 
   if (state.succeeded) {
     return (
@@ -246,16 +255,21 @@ function App() {
       {/* Broke People Menu */}
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3 rounded-lg">
+          <button
+            onClick={() => setBrokeMenuOpen(!brokeMenuOpen)}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3 rounded-lg hover:from-yellow-700 hover:to-orange-700 transition-all duration-300 cursor-pointer"
+          >
             <span className="text-2xl">🪙</span>
             <h2 className="text-xl font-bold text-white">Broke People Menu™</h2>
-          </div>
+            {brokeMenuOpen ? <ChevronUp className="h-5 w-5 text-white" /> : <ChevronDown className="h-5 w-5 text-white" />}
+          </button>
           <p className="text-gray-400 mt-4 italic">
             "Because even cheapskates deserve service. Just not fast service."
           </p>
         </div>
         
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 shadow-xl overflow-hidden">
+        {brokeMenuOpen && (
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-300">
           <div className="bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3">
             <h3 className="text-white font-bold">Budget Services</h3>
           </div>
@@ -305,8 +319,10 @@ function App() {
             </ul>
           </div>
         </div>
+        )}
         
-        <div className="mt-8 bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
+        {brokeMenuOpen && (
+          <div className="mt-8 bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700 animate-in slide-in-from-top-2 duration-300">
           <h4 className="text-white font-medium mb-2 flex items-center gap-2">
             <span className="text-green-400">💡</span>
             New Player Special
@@ -316,6 +332,7 @@ function App() {
             After that, you're on your own like everyone else.
           </p>
         </div>
+        )}
       </div>
 
       {/* Services Section */}
@@ -326,96 +343,168 @@ function App() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">📦 Item Delivery</h3>
             <p className="text-gray-300 text-sm mb-3">Move your stuff from point A to point B</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('item-delivery')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['item-delivery'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['item-delivery'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Any items, any distance</li>
               <li>• I take the risk, you don't</li>
               <li>• 5-15 diamonds depending on distance</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">🛒 Shopping Service</h3>
             <p className="text-gray-300 text-sm mb-3">Buy items from shops for you</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('shopping-service')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['shopping-service'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['shopping-service'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Visit multiple shops</li>
               <li>• Compare prices</li>
               <li>• Item cost + 5-7 diamonds</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">📱 Remote Pickup</h3>
             <p className="text-gray-300 text-sm mb-3">Stay at your base, I'll come to you</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('remote-pickup')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['remote-pickup'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['remote-pickup'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Text me your coords + what you need</li>
               <li>• Keep building while I handle logistics</li>
               <li>• Perfect for active builders</li>
               <li>• I bring stuff, you keep building</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">🚚 Base Moving</h3>
             <p className="text-gray-300 text-sm mb-3">Move your stuff from old base to new base</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('base-moving')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['base-moving'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['base-moving'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Pack everything into shulkers</li>
               <li>• Transport to new location</li>
               <li>• Dump it all there (you organize)</li>
               <li>• 50-200 diamonds depending on size</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">🆘 Emergency Rescue</h3>
             <p className="text-gray-300 text-sm mb-3">When you're stuck and need help</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('emergency-rescue')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['emergency-rescue'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['emergency-rescue'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Emergency supply runs</li>
               <li>• Finish abandoned jobs</li>
               <li>• 20-75 diamonds depending on urgency</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">💰 Debt Collection</h3>
             <p className="text-gray-300 text-sm mb-3">Professional awkward conversation handler</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('debt-collection')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['debt-collection'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['debt-collection'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Collect unpaid trades and IOUs</li>
               <li>• Handle borrowed items never returned</li>
               <li>• 5-15 diamonds + 20% of debt</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">🛒 Bulk Shopping Runs</h3>
             <p className="text-gray-300 text-sm mb-3">Your personal shopping slave</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('bulk-shopping')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['bulk-shopping'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['bulk-shopping'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Multi-shop coordination</li>
               <li>• Price comparison included</li>
               <li>• Item cost + 10-25 diamonds</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">🚨 Emergency Supply Drops</h3>
             <p className="text-gray-300 text-sm mb-3">Rescue service for the helpless</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('emergency-supply')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['emergency-supply'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['emergency-supply'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Food delivery to prevent starvation</li>
               <li>• Tools when you're stuck mining</li>
               <li>• 20-75 diamonds + premium surcharge</li>
             </ul>
+            )}
           </div>
           
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700/50 shadow-xl hover:border-blue-500/50 transition-all duration-300">
             <h3 className="text-lg font-semibold text-white mb-2">🤝 Proxy Shopping</h3>
             <p className="text-gray-300 text-sm mb-3">Social anxiety delivery service</p>
-            <ul className="text-gray-400 text-sm space-y-1">
+            <button
+              onClick={() => toggleService('proxy-shopping')}
+              className="text-blue-400 text-sm hover:text-blue-300 transition-colors mb-3"
+            >
+              {expandedServices['proxy-shopping'] ? 'Hide Details' : 'Show Details'}
+            </button>
+            {expandedServices['proxy-shopping'] && (
+              <ul className="text-gray-400 text-sm space-y-1 animate-in slide-in-from-top-2 duration-200">
               <li>• Handle seller negotiations</li>
               <li>• Deal with difficult shop owners</li>
               <li>• Item cost + 5-12 diamonds</li>
             </ul>
+            )}
           </div>
         </div>
       </div>
@@ -430,65 +519,4 @@ function App() {
   );
 }
 
-      {/* Broke People Menu */}
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3 rounded-lg">
-            <span className="text-2xl">🪙</span>
-            <h2 className="text-xl font-bold text-white">Broke People Menu™</h2>
-          </div>
-          <p className="text-gray-400 mt-4 italic">
-            "Because even cheapskates deserve service. Just not fast service."
-          </p>
-        </div>
-        
-        <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
-          <div className="bg-gradient-to-r from-yellow-600 to-orange-600 px-6 py-3">
-            <h3 className="text-white font-bold">Budget Services</h3>
-          </div>
-          
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Basic Delivery (within 300 blocks)</div>
-                <div className="text-gray-400 text-sm">Includes sarcasm at no extra cost</div>
-              </div>
-              <div className="text-yellow-400 font-bold">3 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Multi-Shop Delivery</div>
-                <div className="text-gray-400 text-sm">Because you couldn't walk to two places</div>
-              </div>
-              <div className="text-yellow-400 font-bold">5 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2 border-b border-gray-700">
-              <div>
-                <div className="text-white font-medium">Item Relocation (within your base)</div>
-                <div className="text-gray-400 text-sm">Literally carrying something 10 blocks</div>
-              </div>
-              <div className="text-yellow-400 font-bold">2 diamonds</div>
-            </div>
-            
-            <div className="flex justify-between items-center py-2">
-              <div>
-                <div className="text-white font-medium">Low Priority Queue Slot</div>
-                <div className="text-gray-400 text-sm">I'll get to it. Eventually. Maybe.</div>
-              </div>
-              <div className="text-yellow-400 font-bold">1 diamond</div>
-            </div>
-          </div>
-          
-          <div className="bg-yellow-900/20 border-t border-yellow-700/30 px-6 py-4">
-            <div className="text-yellow-400 text-sm font-medium mb-2">⚠️ Broke People Menu™ Terms:</div>
-            <ul className="text-yellow-200 text-xs space-y-1">
-              <li>• "Budget" doesn't mean "fast" or "with a smile"</li>
-              <li>• Payment due upfront. No credit for broke people.</li>
-              <li>• Attitude adjustment not included in any package</li>
-            </ul>
-          </div>
-        </div>
-      </div>
 export default App;
