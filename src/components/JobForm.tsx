@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Send,
-  MapPin,
   Package,
   MessageCircle,
   Diamond,
@@ -9,7 +8,6 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Calculator,
   Clock,
   Shield,
 } from "lucide-react";
@@ -17,6 +15,10 @@ import AccessibleSelect from "./AccessibleSelect";
 import { useForm, ValidationError } from "@formspree/react";
 import { FORM_VALIDATION, UI_CONFIG, SERVICES, STORAGE_KEYS, ERROR_MESSAGES } from '../constants';
 import { useDebounce } from '../hooks/useDebounce';
+import { CoordinateInput, CoordinateTips } from './CoordinateInput';
+import DistanceDisplay from './DistanceDisplay';
+import { useDistanceCalculation } from '../utils/distanceCalculator';
+import { DistanceCalculator } from '../utils/distanceCalculator';
 
 const JobForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -32,13 +34,12 @@ const JobForm: React.FC = () => {
     contactMethod: "discord",
     urgency: "soon",
     insurance: "basic",
-    itemQuantity: "64",
+    serviceType: "delivery",
 
     // Optional fields (progressive disclosure)
     contactName: "",
     deadline: "",
     notes: "",
-    itemType: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -52,10 +53,21 @@ const JobForm: React.FC = () => {
   // Debounce form data for validation and auto-save
   const debouncedFormData = useDebounce(formData, UI_CONFIG.DEBOUNCE_DELAY);
 
+  // Auto-calculate distance from coordinates
+  const { analysis: routeAnalysis, error: distanceError } = useDistanceCalculation(
+    formData.pickupCoords,
+    formData.dropoffCoords
+  );
+
   // Options for accessible selects
   const urgencyOptions = SERVICES.URGENCY_OPTIONS;
   const insuranceOptions = SERVICES.INSURANCE_OPTIONS;
   const contactOptions = SERVICES.CONTACT_OPTIONS;
+  const serviceTypeOptions = [
+    { value: 'delivery', label: 'Item Delivery', description: 'Transport items from A to B' },
+    { value: 'shopping', label: 'Shopping Service', description: 'Buy items for you from shops' },
+    { value: 'rescue', label: 'Emergency Rescue', description: 'Come save you from trouble' }
+  ];
 
   // Auto-save to localStorage
   useEffect(() => {
@@ -123,44 +135,8 @@ const JobForm: React.FC = () => {
       newErrors.paymentOffer = FORM_VALIDATION.PAYMENT_OFFER.ERROR_MESSAGE;
     }
 
-    // Quantity validation
-    if (
-      formData.itemQuantity &&
-      (isNaN(Number(formData.itemQuantity)) ||
-        Number(formData.itemQuantity) <= 0)
-    ) {
-      newErrors.itemQuantity = "Quantity must be a positive number";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  // Smart price calculator
-  const calculateEstimatedCost = () => {
-    const quantity = parseInt(formData.itemQuantity) || 64;
-    const urgency = formData.urgency;
-    const insurance = formData.insurance;
-
-    // Base cost: 3 diamonds minimum, +1 per stack
-    let baseCost = Math.max(3, Math.ceil(quantity / 64) + 2);
-
-    // Urgency multipliers
-    const urgencyMultipliers = {
-      "not-urgent": 0.8,
-      soon: 1,
-      urgent: 1.5,
-      "life-or-death": 2,
-    };
-
-    baseCost *=
-      urgencyMultipliers[urgency as keyof typeof urgencyMultipliers] || 1;
-
-    // Insurance costs
-    if (insurance === "premium") baseCost += 5;
-    if (insurance === "basic") baseCost += 2;
-
-    return Math.ceil(baseCost);
   };
 
   // Remove custom handleSubmit, use Formspree's handleSubmit instead
@@ -182,12 +158,7 @@ const JobForm: React.FC = () => {
   // Auto-format coordinates
   const handleCoordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // Auto-format common coordinate patterns
-    let formatted = value;
-    if (value.match(/^\d+\s+\d+\s+\d+$/)) {
-      formatted = value.replace(/\s+/g, ", ");
-    }
-    setFormData((prev) => ({ ...prev, [name]: formatted }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
@@ -203,11 +174,10 @@ const JobForm: React.FC = () => {
     contactMethod: "discord",
     urgency: "soon",
     insurance: "basic",
-    itemQuantity: "64",
+    serviceType: "delivery",
     contactName: "",
     deadline: "",
     notes: "",
-    itemType: "",
   };
 
   const [formKey, setFormKey] = useState(0);
@@ -345,6 +315,18 @@ const JobForm: React.FC = () => {
                   Essential Information
                 </h3>
 
+              {/* Service Type Selection */}
+              <AccessibleSelect
+                id="serviceType"
+                label="Service Type"
+                options={serviceTypeOptions}
+                value={formData.serviceType}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, serviceType: value }))
+                }
+                searchable={false}
+              />
+
               {/* Discord Username Field */}
               <div>
                 <label
@@ -435,7 +417,7 @@ const JobForm: React.FC = () => {
                   htmlFor="itemDescription"
                   className="block text-sm font-medium text-gray-300 mb-2"
                 >
-                  What do you need? (Delivery or Shopping Service) *
+                  What do you need? *
                 </label>
                 <div className="relative">
                   <input
@@ -461,69 +443,48 @@ const JobForm: React.FC = () => {
                 )}
               </div>
 
-              {/* Coordinates Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="pickupCoords"
-                    className="block text-sm font-medium text-gray-300 mb-2"
-                  >
-                    Pickup Location *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      id="pickupCoords"
-                      name="pickupCoords"
-                      value={formData.pickupCoords}
-                      onChange={handleCoordChange}
-                      aria-invalid={!!errors.pickupCoords}
-                      className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                        errors.pickupCoords
-                          ? "border-red-500"
-                          : "border-gray-600"
-                      }`}
-                      placeholder="100, 64, -200"
-                    />
-                    <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
-                  </div>
-                  {errors.pickupCoords && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.pickupCoords}
-                    </p>
-                  )}
+              {/* Coordinates Section */}
+              <div className="space-y-4">
+                <h4 className="text-md font-medium text-white">Locations</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CoordinateInput
+                    label="Pickup Location *"
+                    value={formData.pickupCoords}
+                    onChange={(value) => handleCoordChange({ target: { name: 'pickupCoords', value } } as any)}
+                    placeholder="100, 64, -200"
+                    icon={<Package className="h-5 w-5 text-green-400" />}
+                    error={errors.pickupCoords}
+                    type="pickup"
+                  />
+                  
+                  <CoordinateInput
+                    label="Delivery Location *"
+                    value={formData.dropoffCoords}
+                    onChange={(value) => handleCoordChange({ target: { name: 'dropoffCoords', value } } as any)}
+                    placeholder="300, 64, 150"
+                    icon={<Package className="h-5 w-5 text-blue-400" />}
+                    error={errors.dropoffCoords}
+                    type="delivery"
+                  />
                 </div>
-
-                <div>
-                  <label
-                    htmlFor="dropoffCoords"
-                    className="block text-sm font-medium text-gray-300 mb-2"
-                  >
-                    Delivery Location *
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      id="dropoffCoords"
-                      name="dropoffCoords"
-                      value={formData.dropoffCoords}
-                      onChange={handleCoordChange}
-                      aria-invalid={!!errors.dropoffCoords}
-                      className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                        errors.dropoffCoords
-                          ? "border-red-500"
-                          : "border-gray-600"
-                      }`}
-                      placeholder="300, 64, 150"
-                    />
-                    <MapPin className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                
+                {/* Auto-calculated Distance Display */}
+                {routeAnalysis && (
+                  <DistanceDisplay 
+                    analysis={routeAnalysis}
+                    urgency={formData.urgency}
+                    insurance={formData.insurance}
+                    serviceType={formData.serviceType}
+                  />
+                )}
+                
+                {distanceError && (
+                  <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3">
+                    <p className="text-red-400 text-sm">{distanceError}</p>
                   </div>
-                  {errors.dropoffCoords && (
-                    <p className="text-red-400 text-sm mt-1">
-                      {errors.dropoffCoords}
-                    </p>
-                  )}
-                </div>
+                )}
+                
+                <CoordinateTips />
               </div>
 
               {/* Payment Offer */}
@@ -533,34 +494,12 @@ const JobForm: React.FC = () => {
                   className="block text-sm font-medium text-gray-300 mb-2"
                 >
                   Payment Offer *
-                  <button
-                    type="button"
-                    onClick={() => setShowPriceCalculator(!showPriceCalculator)}
-                    className="ml-2 text-blue-400 hover:text-blue-300 text-xs"
-                  >
-                    <Calculator className="h-4 w-4 inline" /> Price Calculator
-                  </button>
+                  {routeAnalysis && (
+                    <span className="ml-2 text-blue-400 text-xs">
+                      (Estimated: {Math.ceil(routeAnalysis.distance / 100) * 2 + 3} diamonds)
+                    </span>
+                  )}
                 </label>
-
-                {showPriceCalculator && (
-                  <div className="mb-3 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
-                    <div className="text-sm text-blue-400 mb-2">
-                      Estimated Cost: {calculateEstimatedCost()} diamonds
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Based on:{" "}
-                      {Math.ceil(parseInt(formData.itemQuantity || "64") / 64)}{" "}
-                      stack(s), {formData.urgency} urgency, {formData.insurance}{" "}
-                      insurance
-                    </div>
-                    <div className="text-xs text-blue-300 mt-2 italic">
-                      💡 Time saved: ~
-                      {Math.ceil(parseInt(formData.itemQuantity || "64") / 64) *
-                        15}{" "}
-                      minutes of boring transport work
-                    </div>
-                  </div>
-                )}
 
                 <div className="relative">
                   <input
@@ -614,32 +553,6 @@ const JobForm: React.FC = () => {
                   }
                   searchable={false}
                 />
-                <Shield className="h-4 w-4 text-blue-400 mt-2" />
-
-                <div>
-                  <label
-                  htmlFor="itemQuantity"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                  >
-                  Quantity
-                  </label>
-                  <input
-                  type="number"
-                  id="itemQuantity"
-                  name="itemQuantity"
-                  value={formData.itemQuantity}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                  placeholder="64"
-                  min="1"
-                  />
-                  <div className="text-xs text-gray-400 mt-1">
-                  {formData.itemQuantity &&
-                    `~${Math.ceil(
-                    parseInt(formData.itemQuantity) / 64
-                    )} stack(s)`}
-                  </div>
-                </div>
                 </div>
             </div>
             )}
@@ -723,6 +636,12 @@ const JobForm: React.FC = () => {
                   <span className="text-white font-medium">Order Summary</span>
                 </div>
                 <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Service:</span>
+                    <span className="text-white capitalize">
+                      {formData.serviceType.replace('-', ' ')}
+                    </span>
+                  </div>
                   {formData.itemDescription && (
                     <div className="flex justify-between">
                       <span className="text-gray-300">Items:</span>
@@ -731,20 +650,16 @@ const JobForm: React.FC = () => {
                       </span>
                     </div>
                   )}
-                  {formData.itemQuantity && (
+                  {routeAnalysis && (
                     <div className="flex justify-between">
-                      <span className="text-gray-300">Quantity:</span>
+                      <span className="text-gray-300">Distance:</span>
                       <span className="text-white">
-                        {formData.itemQuantity} items
-                        <span className="text-gray-400 text-xs ml-1">
-                          (~{Math.ceil(parseInt(formData.itemQuantity) / 64)}{" "}
-                          stacks)
-                        </span>
+                        {routeAnalysis.distance} blocks
                       </span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-gray-300">Service:</span>
+                    <span className="text-gray-300">Options:</span>
                     <span className="text-white capitalize">
                       {formData.urgency.replace("-", " ")} •{" "}
                       {formData.insurance} insurance
@@ -771,6 +686,16 @@ const JobForm: React.FC = () => {
                 <input type="hidden" name="pickupCoords" value={formData.pickupCoords} />
                 <input type="hidden" name="dropoffCoords" value={formData.dropoffCoords} />
                 <input type="hidden" name="paymentOffer" value={formData.paymentOffer} />
+                <input type="hidden" name="serviceType" value={formData.serviceType} />
+                <input type="hidden" name="urgency" value={formData.urgency} />
+                <input type="hidden" name="insurance" value={formData.insurance} />
+                {routeAnalysis && (
+                  <>
+                    <input type="hidden" name="calculatedDistance" value={routeAnalysis.distance} />
+                    <input type="hidden" name="dangerLevel" value={routeAnalysis.dangerLevel} />
+                    <input type="hidden" name="estimatedTime" value={routeAnalysis.estimatedTime} />
+                  </>
+                )}
               </>
             )}
             {/* Submit Button */}
@@ -820,8 +745,8 @@ const JobForm: React.FC = () => {
                     </li>
                     <li>
                       • <strong>Time Value:</strong> Your gaming time {">"}{" "}
-                      diamond cost. Focus on building, not hauling.
-                    </li>
+                    • <strong>Distance:</strong> Automatically calculated from your coordinates.
+                    No guessing required.
                     <li>
                       • <strong>Coordinates:</strong> Use F3 for exact location
                       (X Y Z format)
@@ -831,10 +756,6 @@ const JobForm: React.FC = () => {
                       cost extra (danger tax)
                     </li>
                     <li>
-                      • <strong>Multi-shop runs:</strong> List all shops for
-                      bulk coordination discounts
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>
