@@ -104,3 +104,50 @@ section {
     animation: none !important;
   }
 }
+
+/* Mobile responsiveness for forms and controls */
+@media (max-width: 768px) {
+  form,
+  .form-container {
+    padding: 1rem;
+    margin: 0 auto;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-width: 0;
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    touch-action: manipulation;
+  }
+  button,
+  .button {
+    width: 100%;
+    min-width: 0;
+    font-size: 1.1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    touch-action: manipulation;
+  }
+  label {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .form-group,
+  .field,
+  .form-field {
+    margin-bottom: 1.25rem;
+  }
+  body,
+  html {
+    overflow-x: hidden;
+  }
+}

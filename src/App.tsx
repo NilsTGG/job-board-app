@@ -1,6 +1,7 @@
 import React from 'react';
 import { Package, Diamond, MapPin, MessageCircle, Clock } from 'lucide-react';
 import { useForm, ValidationError } from '@formspree/react';
+import Footer from './components/Footer';
 
 function App() {
   const [state, handleSubmit] = useForm('xqabvypp');
@@ -165,7 +166,7 @@ function App() {
           {/* Sidebar Info */}
           <div className="space-y-6">
             {/* Pricing */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <div id="pricing" className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <Diamond className="h-5 w-5 text-yellow-400" />
                 Pricing
@@ -233,7 +234,7 @@ function App() {
       </div>
 
       {/* Services Section */}
-      <div className="max-w-4xl mx-auto px-4 py-12">
+     <div id="services" className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-white mb-4">What I Do</h2>
           <p className="text-gray-400">Simple delivery services for lazy players</p>
@@ -282,12 +283,7 @@ function App() {
         </div>
       </div>
       {/* Footer */}
-      <footer className="bg-gray-800 border-t border-gray-700 py-6 mt-12">
-        <div className="max-w-4xl mx-auto px-4 text-center text-gray-400 text-sm">
-          <p>Because You Won't™ - Professional Minecraft delivery service</p>
-          <p className="mt-1">Payment due on pickup • All dimensions covered • Professional service guaranteed</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
