@@ -223,9 +223,7 @@ const ConversationalForm: React.FC = () => {
               value={formData.discordUsername}
               onChange={(e) => updateFormData('discordUsername', e.target.value.toLowerCase())}
               onKeyDown={handleKeyDown}
-              placeholder="e.g. nilstg"
-              autoComplete="username"
-              pattern="(?!.*\.\.)[a-z0-9._]{2,32}"
+              placeholder="yourname (lowercase, no @)"
               className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
               disabled={state.submitting}
             />
@@ -510,9 +508,7 @@ const ConversationalForm: React.FC = () => {
                   value={formData.discordUsername}
                   onChange={(e) => updateFormData('discordUsername', e.target.value.toLowerCase())}
                   onKeyDown={handleKeyDown}
-                  placeholder="e.g. nilstg"
-                  autoComplete="username"
-                  pattern="(?!.*\.\.)[a-z0-9._]{2,32}"
+                  placeholder="yourname (lowercase, no @)"
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
                   disabled={state.submitting}
                   aria-required="true"
